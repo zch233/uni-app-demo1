@@ -1,6 +1,6 @@
 <template>
 	<view class="content">
-		<view class="input-group">
+		<!-- <view class="input-group">
 			<view class="input-row border">
 				<text class="title">账号：</text>
 				<m-input class="m-input" type="text" clearable focus v-model="account" placeholder="请输入账号"></m-input>
@@ -17,7 +17,7 @@
 			<navigator url="../reg/reg">注册账号</navigator>
 			<text>|</text>
 			<navigator url="../pwd/pwd">忘记密码</navigator>
-		</view>
+		</view> -->
 		<view class="oauth-row" v-if="hasProvider" v-bind:style="{top: positionTop + 'px'}">
 			<view class="oauth-image" v-for="provider in providerList" :key="provider.value">
 				<image :src="provider.image" @tap="oauth(provider.value)"></image>
@@ -169,7 +169,7 @@
 				 */
 				if (this.forcedLogin) {
 					uni.reLaunch({
-						url: '../main/main',
+						url: '../index/index',
 					});
 				} else {
 					uni.navigateBack();

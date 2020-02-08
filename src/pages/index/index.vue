@@ -1,5 +1,9 @@
 <template>
 	<view class="content">
+		<image class="logo" src="/static/logo.png"></image>
+		<view>
+			<text class="title">{{title}}</text>
+		</view>
 		<view v-if="hasLogin" class="hello">
 			<view class="title">
 				您好 {{userName}}，您已成功登录。
@@ -27,6 +31,11 @@
 	} from 'vuex'
 
 	export default {
+		data () {
+			return {
+				title: 'zch'
+			}
+		},
 		computed: mapState(['forcedLogin', 'hasLogin', 'userName']),
 		onLoad() {
 			if (!this.hasLogin) {
@@ -60,6 +69,22 @@
 </script>
 
 <style>
+	.content {
+		text-align: center;
+		height: 400upx;
+	}
+
+	.logo {
+		height: 200upx;
+		width: 200upx;
+		margin-top: 200upx;
+	}
+
+	.title {
+		font-size: 36upx;
+		color: #8f8f94;
+	}
+
 	.hello {
 		display: flex;
 		flex: 1;
