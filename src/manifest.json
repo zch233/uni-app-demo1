@@ -1,6 +1,6 @@
 {
 	"name": "TOY",
-	"appid": "wx485a83879216654a",
+	"appid": "",
 	"description": "",
 	"versionName": "1.0.0",
 	"versionCode": "100",
@@ -54,7 +54,7 @@
 
 	},
 	"mp-weixin": { /* 微信小程序特有相关 */
-		"appid": "",
+		"appid": "wx485a83879216654a",
 		"setting": {
 			"urlCheck": false
 		},
