@@ -155,9 +155,9 @@
 		font-weight: bold;
 		margin: 20rpx 0;
 		line-height: 1;
-		background:linear-gradient(88deg,rgba(228,208,171,1) 0%, rgba(184,150,88,1) 50.78125%, rgba(223,202,164,1) 100%);
-		-webkit-background-clip:text;
-		-webkit-text-fill-color:transparent;
+		background: linear-gradient(88deg,rgba(228,208,171,1) 0%, rgba(184,150,88,1) 50.78125%, rgba(223,202,164,1) 100%);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
 	}
 	.vipContent-vipCard-text {
 		font-size: 18rpx;
