@@ -9,9 +9,6 @@
 
 
 /*通用 */
-* {
-	box-sizing: border-box;
-}
 .uni-flex {
 	display: flex;
 	flex-direction: row;

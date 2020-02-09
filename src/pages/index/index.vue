@@ -1,21 +1,21 @@
 <template>
 	<view class="vipContent">
 		<view class="vipContent-vipCard">
-			<image class="vipContent-vipCard-HG" src="/static/img/vipHG.png"></image>
+			<image mode='widthFix' class="vipContent-vipCard-HG" src="/static/img/vipHG.png"></image>
 			<view class="vipContent-vipCard-title">开通盲果VIP乐享3大权益</view>
 			<view class="vipContent-vipCard-text">很高兴在这里遇见您！希望在接下来的日子里，盲果可以成为您美好生活中的一部分，希望您能加入盲果VIP！服务即将解锁......</view>
 			<view class="vipContent-vipCard-footer">
 				<view class="vipContent-vipCard-footer-left">
-					<image src="/static/img/vipZS.png"></image>
+					<image mode='widthFix' src="/static/img/vipZS.png"></image>
 					<text>乐享3大权益</text>
 				</view>
 				<view class="vipContent-vipCard-footer-right">
-					<image src="/static/img/vipFX.png"></image>
+					<image mode='widthFix' src="/static/img/vipFX.png"></image>
 					<text>分享有礼</text>
 				</view>
 			</view>
 		</view>
-		<image class="vipContent-down" src="/static/img/vipDown.png"></image>
+		<image mode='widthFix' class="vipContent-down" src="/static/img/vipDown.png"></image>
 		<view class="vipContent-title"><text>每月领取优惠券</text></view>
 		<view class="vipContent-coupon">
 			<view class="vipContent-coupon-item-wrapper">
@@ -36,7 +36,49 @@
 			</view>
 		</view>
 		<view class="vipContent-title"><text>专属会员特权</text></view>
+		<view class="vipContent-right">
+			<view class="vipContent-right-top">
+				<view class="vipContent-right-item">
+					<image mode='widthFix' class="vipRight1" src="/static/img/vipRight1.png"></image>
+					<view>线下购物<text>5</text>折优惠</view>
+				</view>
+				<view class="vipContent-right-item">
+					<image mode='widthFix' class="vipRight2" src="/static/img/vipRight2.png"></image>
+					<view>线上洗涤<text>7</text>折优惠</view>
+				</view>
+				<view class="vipContent-right-item">
+					<image mode='widthFix' class="vipRight3" src="/static/img/vipRight3.png"></image>
+					<view>会员<text>免</text>运费</view>
+				</view>
+			</view>
+			<view class="vipContent-right-bottom">
+				<view class="vipContent-right-item">
+					<image mode='widthFix' class="vipRight4" src="/static/img/vipRight4.png"></image>
+					<view>年享优惠未满3000元</view>
+					<view><text>退</text>全年年费</view>
+				</view>
+				<view class="vipContent-right-item">
+					<image mode='widthFix' class="vipRight5" src="/static/img/vipRight5.png"></image>
+					<view>年累计干洗券 / 优惠券用满</view>
+					<view>15张可<text>免</text>次年年费</view>
+				</view>
+			</view>
+		</view>
 		<view class="vipContent-title"><text>分享有礼</text></view>
+		<view class="vipContent-gift">
+			<image mode='widthFix' class="vipGift" src="/static/img/vipGift.png"></image>
+			<image mode='widthFix' class="vipGiftBg" src="/static/img/vipGiftBg.png"></image>
+			<view class="vipContent-gift-info">
+				<view class="vipContent-gift-infoTitle">邀请有礼</view>
+				<view class="vipContent-gift-infoTips">邀请好友即可获得￥1000</view>
+				<navigator class="vipContent-gift-infoNav">查看详情</navigator>
+			</view>
+		</view>
+		<view class="vipContent-shareBar">
+			<view>生成海报</view>
+			<view>面对面分享</view>
+		</view>
+		<view class="vipContent-buyButton">￥<text>998/</text>年 购买会员权益</view>
 	</view>
 </template>
 
@@ -107,7 +149,6 @@
 	}
 	.vipContent-vipCard-HG {
 		width: 70rpx;
-		height: 52rpx;
 	}
 	.vipContent-vipCard-title {
 		font-size: 45rpx;
@@ -135,17 +176,14 @@
 	}
 	.vipContent-vipCard-footer-left image {
 		width: 46rpx;
-		height: 40rpx;
 		margin-right: 12rpx;
 	}
 	.vipContent-vipCard-footer-right image {
 		width: 41rpx;
-		height: 41rpx;
 		margin-right: 12rpx;
 	}
 	.vipContent-down {
 		width: 129rpx;
-		height: 51rpx;
 		margin: 14rpx 0 40rpx;
 	}
 	.vipContent-title {
@@ -177,7 +215,7 @@
 		padding: 0 10%;
 		line-height: 1;
 		color: #E5D0A4;
-		margin-bottom: 115rpx;
+		margin-bottom: 100rpx;
 	}
 	.vipContent-coupon-item-wrapper {
 		text-align: center;
@@ -217,5 +255,121 @@
 		font-size: 18rpx;
 		color: #BEA26F;
 		margin-top: 4rpx;
+	}
+	.vipContent-right view {
+		margin-bottom: 10rpx;
+	}
+	.vipContent-right text {
+		font-size: 30rpx;
+		font-weight: bold;
+		padding: 0 .2em;
+	}
+	.vipContent-right-top, .vipContent-right-bottom {
+		display: flex;
+		text-align: center;
+		line-height: 1;
+		color: #E5D0A4;
+		font-size: 18rpx;
+		justify-content: space-between;
+		letter-spacing: .1em;
+	}
+	.vipContent-right-top {
+		padding: 0 10%;
+	}
+	.vipContent-right-top image {
+		margin-bottom: 18rpx;
+	}
+	.vipContent-right-top image.vipRight1 {
+		width: 109rpx;
+	}
+	.vipContent-right-top image.vipRight2 {
+		width: 100rpx;
+	}
+	.vipContent-right-top image.vipRight3 {
+		width: 109rpx;
+	}
+	.vipContent-right-top image.vipRight4 {
+		width: 117rpx;
+	}
+	.vipContent-right-top image.vipRight5 {
+		width: 117rpx;
+	}
+	.vipContent-right-bottom {
+		padding: 38rpx 18% 72rpx;
+	}
+	.vipContent-right-bottom image {
+		width: 115rpx;
+		margin-bottom: 18rpx;
+	}
+	.vipContent-gift {
+		display: flex;
+		padding: 27rpx 28rpx 30rpx;
+		align-items: center;
+		border: 3rpx solid #E5D0A4;
+		border-radius: 20rpx;
+		width: 92%;
+		margin: 0 auto;
+		box-sizing: border-box;
+		position: relative;
+		line-height: 1;
+	}
+	.vipContent-gift .vipGift {
+		width: 177rpx;
+		padding-left: 84rpx;
+	}
+	.vipContent-gift .vipGiftBg {
+		width: 294rpx;
+		position: absolute;
+		top: 30rpx;
+		left: 28rpx;
+	}
+	.vipContent-gift-info {
+		padding-left: 63rpx;
+	}
+	.vipContent-gift-infoTitle {
+		font-size: 46rpx;
+		color: #BEA26F;
+	}
+	.vipContent-gift-infoTips {
+		font-size: 24rpx;
+		margin: 19rpx 0 27rpx;
+	}
+	.vipContent-gift-infoNav {
+		font-size: 24rpx;
+		color: #333333;
+		padding: 8rpx 12rpx;
+		background-image: linear-gradient(to left,rgba(228,208,171,1) 0%, rgba(184,150,88,1) 100%);;
+		border-radius: 5rpx;
+		display: inline-block;
+	}
+	.vipContent-shareBar {
+		display: flex;
+		justify-content: space-between;
+		width: 92%;
+		margin: 30rpx auto 39rpx;
+		color: #333333;
+		font-size: 42rpx;
+	}
+	.vipContent-shareBar view {
+		width: 264rpx;
+		background-image: linear-gradient(to left,rgba(228,208,171,1) 0%, rgba(184,150,88,1) 100%);;
+		border-radius: 5rpx;
+		line-height: 83rpx;
+		text-align: center;
+		border-radius: 6rpx;
+	}
+	.vipContent-buyButton {
+		text-align: center;
+		width: 92%;
+		margin: 0 auto;
+		color: #333333;
+		font-size: 50rpx;
+		background-image: linear-gradient(to left,rgba(228,208,171,1) 0%, rgba(184,150,88,1) 100%);;
+		border-radius: 50rpx;
+		line-height: 100rpx;
+		font-weight: bold;
+	}
+	.vipContent-buyButton text {
+		font-size: 80rpx;
 	}
 </style>
