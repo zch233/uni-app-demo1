@@ -7,6 +7,12 @@
 			}
 		},
 		{
+			"path": "pages/vipDetail/vipDetail",
+			"style": {
+				"navigationBarTitleText": "会员权益"
+			}
+		},
+		{
 			"path": "pages/login/login",
 			"style": {
 				"navigationBarTitleText": "登录"

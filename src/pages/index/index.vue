@@ -71,7 +71,7 @@
 			<view class="vipContent-gift-info">
 				<view class="vipContent-gift-infoTitle">邀请有礼</view>
 				<view class="vipContent-gift-infoTips">邀请好友即可获得￥1000</view>
-				<navigator class="vipContent-gift-infoNav">查看详情</navigator>
+				<navigator class="vipContent-gift-infoNav" url="/pages/vipDetail/vipDetail">查看详情</navigator>
 			</view>
 		</view>
 		<view class="vipContent-shareBar">
@@ -356,7 +356,7 @@
 		border-radius: 5rpx;
 		line-height: 83rpx;
 		text-align: center;
-		border-radius: 6rpx;
+		border-radius: 5rpx;
 	}
 	.vipContent-buyButton {
 		text-align: center;
@@ -365,7 +365,7 @@
 		color: #333333;
 		font-size: 50rpx;
 		background-image: linear-gradient(to left,rgba(228,208,171,1) 0%, rgba(184,150,88,1) 100%);;
-		border-radius: 50rpx;
+		border-radius: 100rpx;
 		line-height: 100rpx;
 		font-weight: bold;
 	}
