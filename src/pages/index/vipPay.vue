@@ -27,14 +27,20 @@
       <view class="vipPayContent-bottomBar-price">总价<text>￥998</text></view>
       <view class="vipPayContent-bottomBar-button">确认支付</view>
     </view>
+    <uniPopup ref="popup" :maskClick="false">
+     <image @click="$refs.popup.close()" mode='widthFix' src="/static/img/paySuccess.png"></image>
+    </uniPopup>
 	</view>
 </template>
 
 <script>
+  import uniPopup from 'components/uni-popup/uni-popup.vue'
+
 	export default {
-		methods: {
-			
-		}
+    components: { uniPopup },
+    onLoad () {
+      this.$refs.popup.open()
+    }
 	}
 </script>
 

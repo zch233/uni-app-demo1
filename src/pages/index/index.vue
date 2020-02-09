@@ -366,7 +366,7 @@
 		font-size: 50rpx;
 		background-image: linear-gradient(to left,rgba(228,208,171,1) 0%, rgba(184,150,88,1) 100%);;
 		border-radius: 100rpx;
-		padding: 14rpx 0 10rpx;
+		padding: 12rpx 0 14rpx;
 		line-height: 1;
 		font-weight: bold;
 	}
