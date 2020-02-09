@@ -7,6 +7,12 @@
 			}
 		},
 		{
+			"path": "pages/index/vipPay",
+			"style": {
+				"navigationBarTitleText": "购买会员"
+			}
+		},
+		{
 			"path": "pages/vipDetail/vipDetail",
 			"style": {
 				"navigationBarTitleText": "会员权益"
@@ -25,6 +31,14 @@
 			}
 		}
 	],
+	"condition": {
+		"current": 0,
+		"list": [{
+				"name": "test",
+				"path": "pages/index/vipPay",
+				"query": ""
+		}]
+	},
 	"tabBar": {
 		"color": "#7a7e83",
 		"selectedColor": "#0faeff",

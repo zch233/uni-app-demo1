@@ -78,7 +78,7 @@
 			<view>生成海报</view>
 			<view>面对面分享</view>
 		</view>
-		<view class="vipContent-buyButton">￥<text>998/</text>年 购买会员权益</view>
+		<navigator url="/pages/index/vipPay" class="vipContent-buyButton">￥<text>998/</text>年 购买会员权益</navigator>
 	</view>
 </template>
 
@@ -366,7 +366,8 @@
 		font-size: 50rpx;
 		background-image: linear-gradient(to left,rgba(228,208,171,1) 0%, rgba(184,150,88,1) 100%);;
 		border-radius: 100rpx;
-		line-height: 100rpx;
+		padding: 14rpx 0 10rpx;
+		line-height: 1;
 		font-weight: bold;
 	}
 	.vipContent-buyButton text {
