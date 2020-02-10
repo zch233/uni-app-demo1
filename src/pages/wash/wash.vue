@@ -36,7 +36,7 @@
         <view class="totalBar-info-tips">共选择{{ totalCount }}件</view>
         <view class="totalBar-info-price">￥{{ totalPrice }}</view>
       </view>
-      <view class="totalBar-button">去结算</view>
+      <view class="totalBar-button" @click="settleOrder">去结算</view>
     </view>
 	</view>
 </template>
@@ -47,6 +47,11 @@
       return {
         totalCount: 0,
         totalPrice: 0
+      }
+    },
+    methods: {
+      settleOrder () {
+        uni.navigateTo({ url: '/pages/wash/order' })
       }
     }
 	}
