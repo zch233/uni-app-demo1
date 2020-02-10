@@ -15,7 +15,8 @@
 		{
 			"path": "pages/index/vipShare",
 			"style": {
-				"navigationBarTitleText": "二维码分享"
+				"navigationBarTitleText": "二维码分享",
+				"disableScroll": true
 			}
 		},
 		{

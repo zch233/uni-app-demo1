@@ -75,8 +75,8 @@
 			</view>
 		</view>
 		<view class="vipContent-shareBar">
-			<view>生成海报</view>
-			<view>面对面分享</view>
+			<view class="vipContent-shareBar-button" @click="save">生成海报</view>
+			<navigator class="vipContent-shareBar-button" url="/pages/index/vipShare">面对面分享</navigator>
 		</view>
 		<navigator url="/pages/index/vipPay" class="vipContent-buyButton">￥<text>998/</text>年 购买会员权益</navigator>
 	</view>
@@ -102,13 +102,13 @@
 						title: '未登录',
 						content: '您未登录，需要登录后才能继续',
 						/**
-						 * 如果需要强制登录，不显示取消按钮
+						 * 如果需要强制登录，不显示取消按钮.
 						 */
 						showCancel: !this.forcedLogin,
 						success: (res) => {
 							if (res.confirm) {
 								/**
-								 * 如果需要强制登录，使用reLaunch方式
+								 * 如果需要强制登录，使用reLaunch方式.
 								 */
 								if (this.forcedLogin) {
 									uni.reLaunch({
@@ -123,6 +123,17 @@
 						}
 					});
 				}
+			},
+			save () {
+				uni.saveImageToPhotosAlbum({
+					filePath: '/static/img/poster.png',
+					success: function () {
+						uni.showToast('保存成功，请至相册查看！')
+					},
+					fail: function () {
+						uni.showToast('保存失败！')
+					},
+			});
 			}
 		},
 	}
@@ -348,7 +359,7 @@
 		color: #333333;
 		font-size: 42rpx;
 	}
-	.vipContent-shareBar view {
+	.vipContent-shareBar-button {
 		width: 264rpx;
 		background-image: linear-gradient(to left,rgba(228,208,171,1) 0%, rgba(184,150,88,1) 100%);;
 		border-radius: 5rpx;
