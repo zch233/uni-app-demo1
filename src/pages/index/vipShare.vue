@@ -28,17 +28,6 @@
               <view class="content-couponList-item-right-time">2018/09/01-2018/09/02</view>
             </view>
           </view>
-					<view class="content-couponList-item">
-            <view class="content-couponList-item-left">
-              <view class="content-couponList-item-left-price">￥<text>50</text></view>
-              <view class="content-couponList-item-left-tips">全场通用</view>
-            </view>
-            <view class="content-couponList-item-right">
-              <view class="content-couponList-item-right-title">优惠券</view>
-              <view class="content-couponList-item-right-tips">满1元使用</view>
-              <view class="content-couponList-item-right-time">2018/09/01-2018/09/02</view>
-            </view>
-          </view>
         </scroll-view>
 			</view>
 			<view @click="$refs.popup.close()" class="content-couponButton">确认</view>
