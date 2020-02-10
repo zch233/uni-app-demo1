@@ -20,7 +20,7 @@
 			}
 		},
 		{
-			"path": "pages/vipDetail/vipDetail",
+			"path": "pages/index/vipDetail",
 			"style": {
 				"navigationBarTitleText": "会员权益"
 			}

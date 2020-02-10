@@ -71,7 +71,7 @@
 			<view class="vipContent-gift-info">
 				<view class="vipContent-gift-infoTitle">邀请有礼</view>
 				<view class="vipContent-gift-infoTips">邀请好友即可获得￥1000</view>
-				<navigator class="vipContent-gift-infoNav" url="/pages/vipDetail/vipDetail">查看详情</navigator>
+				<navigator class="vipContent-gift-infoNav" url="/pages/index/vipDetail">查看详情</navigator>
 			</view>
 		</view>
 		<view class="vipContent-shareBar">
