@@ -13,6 +13,12 @@
 			}
 		},
 		{
+			"path": "pages/index/vipShare",
+			"style": {
+				"navigationBarTitleText": "二维码分享"
+			}
+		},
+		{
 			"path": "pages/vipDetail/vipDetail",
 			"style": {
 				"navigationBarTitleText": "会员权益"
@@ -33,11 +39,12 @@
 	],
 	"condition": {
 		"current": 0,
-		"list": [{
+		"list": [
+			{
 				"name": "test",
-				"path": "pages/index/vipPay",
-				"query": ""
-		}]
+				"path": "pages/index/vipShare"
+			}
+		]
 	},
 	"tabBar": {
 		"color": "#7a7e83",

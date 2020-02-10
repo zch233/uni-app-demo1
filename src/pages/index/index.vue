@@ -79,22 +79,13 @@
 			<view>面对面分享</view>
 		</view>
 		<navigator url="/pages/index/vipPay" class="vipContent-buyButton">￥<text>998/</text>年 购买会员权益</navigator>
-		<uniPopup ref="popup" :maskClick="false">
-			<view class="vipContent-couponWrapper">
-				<view class="vipContent-couponTitle">升级会员好礼！</view>
-				<view class="vipContent-couponList"></view>
-			</view>
-			<view @click="$refs.popup.close()" class="vipContent-couponButton">确认</view>
-		</uniPopup>
 	</view>
 </template>
 
 <script>
 	import { mapState } from 'vuex'
-	import uniPopup from 'components/uni-popup/uni-popup.vue'
 
 	export default {
-		components: { uniPopup },
 		data () {
 			return {
 				title: 'zch'
@@ -103,7 +94,6 @@
 		computed: mapState(['forcedLogin', 'hasLogin', 'userName']),
 		onLoad() {
 			// this.init()
-			this.$refs.popup.open()
 		},
 		methods: {
 			init () {
@@ -380,58 +370,5 @@
 	}
 	.vipContent-buyButton text {
 		font-size: 80rpx;
-	}
-	.vipContent-couponWrapper {
-		width: 622rpx;
-		height: 778rpx;
-		color: #BEA26F;
-		background-image: url('~@/static/img/vipCouponBg2.png');
-		background-repeat: no-repeat;
-		background-size: cover;
-		padding: 86rpx 53rpx 91rpx;
-		position: relative;
-		box-sizing: border-box;
-	}
-	.vipContent-couponWrapper::before {
-		content: '';
-		position: absolute;
-		width: 691rpx;
-		background-image: url('~@/static/img/vipCouponBg1.png');
-		background-repeat: no-repeat;
-		background-size: cover;
-		height: 538rpx;
-		top: -50rpx;
-		left: -33rpx;
-		z-index: 1;
-	}
-	.vipContent-couponTitle {
-		position: absolute;
-		top: -14rpx;
-		left: -14rpx;
-		color: #7D582C;
-		font-size: 36rpx;
-		width: 100%;
-		height: 159rpx;
-		background-image: url('~@/static/img/vipCouponBg3.png');
-		background-repeat: no-repeat;
-		background-size: cover;
-		padding-top: 1em;
-		box-sizing: border-box;
-	}
-	.vipContent-couponList {
-		width: 100%;
-		height: 100%;
-	}
-	.vipContent-couponButton {
-		color: #fff;
-		background-color: rgb(211, 170, 125);
-		border: 2rpx solid rgb(196, 123, 69);
-		box-shadow: 0 0 0 10rpx rgb(211, 170, 125);
-		border-radius: 89rpx;
-		font-size: 36rpx;
-		line-height: 2;
-		width: 60%;
-		margin: 0 auto;
-		margin-top: 40rpx;
 	}
 </style>
