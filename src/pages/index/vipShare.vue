@@ -139,7 +139,6 @@
 				color: #7D582C;
 				font-size: 30rpx;
 				text-align: center;
-				border-right: 2rpx dashed #cba983;
 				&-price {
 					color: #DCB17E;
 					font-size: 55rpx;

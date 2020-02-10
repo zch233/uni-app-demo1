@@ -26,6 +26,12 @@
 			}
 		},
 		{
+			"path": "pages/wash/wash",
+			"style": {
+				"navigationBarTitleText": "洗涤"
+			}
+		},
+		{
 			"path": "pages/login/login",
 			"style": {
 				"navigationBarTitleText": "登录"
@@ -43,7 +49,7 @@
 		"list": [
 			{
 				"name": "test",
-				"path": "pages/index/vipShare"
+				"path": "pages/wash/wash"
 			}
 		]
 	},
@@ -52,8 +58,13 @@
 		"selectedColor": "#0faeff",
 		"backgroundColor": "#ffffff",
 		"list": [{
+			"pagePath": "pages/wash/wash",
+			"text": "洗涤",
+			"iconPath": "static/img/home.png",
+			"selectedIconPath": "static/img/homeHL.png"
+		}, {
 			"pagePath": "pages/index/index",
-			"text": "首页",
+			"text": "会员",
 			"iconPath": "static/img/home.png",
 			"selectedIconPath": "static/img/homeHL.png"
 		}, {
