@@ -1,16 +1,22 @@
 <template>
 	<view class="content">
 		<view class="payBg">
-			<!-- <image mode='widthFix' src="/static/img/paySuccess.png"></image> -->
-			<image mode='widthFix' src="/static/img/payFail.png"></image>
+			<image v-if="success" mode='widthFix' src="/static/img/paySuccess.png"></image>
+			<image v-else mode='widthFix' src="/static/img/payFail.png"></image>
     </view>
-    <view class="payStatus">付款失败</view>
+    <view v-if="success" class="payStatus">付款成功</view>
+    <view v-else class="payStatus">付款失败</view>
 		<navigator url="/pages/index/vipPay" class="viewOrder">查看订单详情</navigator>
 	</view>
 </template>
 
 <script>
 	export default {
+    data () {
+      return {
+        success: true
+      }
+    }
 	}
 </script>
 
