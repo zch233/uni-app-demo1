@@ -28,7 +28,7 @@
       <view class="vipPayContent-bottomBar-button">确认支付</view>
     </view>
     <uniPopup ref="popup" :maskClick="false">
-     <image @click="$refs.popup.close()" mode='widthFix' src="/static/img/paySuccess.png"></image>
+     <image @click="$refs.popup.close()" mode='widthFix' src="/static/img/payVipSuccess.png"></image>
     </uniPopup>
 	</view>
 </template>
