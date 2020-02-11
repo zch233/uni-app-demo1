@@ -1,5 +1,6 @@
 <template>
 	<view class="content">
+		1
 	</view>
 </template>
 
@@ -10,6 +11,6 @@
 	}
 </script>
 
-<style>
+<style lang="scss" scoped>
 
 </style>
