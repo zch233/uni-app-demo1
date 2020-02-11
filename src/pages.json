@@ -61,7 +61,7 @@
 		"list": [
 			{
 				"name": "test",
-				"path": "pages/wash/paySuccess"
+				"path": "pages/user/user"
 			}
 		]
 	},
