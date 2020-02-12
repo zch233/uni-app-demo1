@@ -37,7 +37,7 @@
   margin-left: 24rpx;
 }
 .profileItem {
-  border-bottom: 2rpx solid #bbb;
+  border-bottom: 2rpx solid #f2f2f2;
   height: 150rpx;
   display: flex;
   align-items: center;
@@ -49,6 +49,8 @@
   &-value {
     font-size: 30rpx;
     color: #A1A1A1;
+    display: inline-flex;
+    align-items: center;
     .avatar {
       width: 88rpx;
       height: 88rpx;

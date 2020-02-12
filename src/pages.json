@@ -15,8 +15,7 @@
 		{
 			"path": "pages/index/vipShare",
 			"style": {
-				"navigationBarTitleText": "二维码分享",
-				"disableScroll": true
+				"navigationBarTitleText": "二维码分享"
 			}
 		},
 		{
@@ -62,8 +61,8 @@
 			}
 		},
 		{
-			"path" : "pages/user/order",
-			"style" : {
+			"path": "pages/user/order",
+			"style": {
 				"navigationBarTitleText": "我的订单",
 				"disableScroll": true,
 				"app-plus": {
@@ -72,15 +71,15 @@
 			}
 		},
 		{
-			"path": "pages/user/profile",
-			"style": {
-				"navigationBarTitleText": "个人资料"
-			}
-		},
-		{
 			"path": "pages/user/orderDetail",
 			"style": {
 				"navigationBarTitleText": "订单详情"
+			}
+		},
+		{
+			"path": "pages/user/profile",
+			"style": {
+				"navigationBarTitleText": "个人资料"
 			}
 		}
 	],
