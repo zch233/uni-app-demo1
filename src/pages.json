@@ -62,19 +62,25 @@
 			}
 		},
 		{
-			"path": "pages/user/order",
-			"style": {
+			"path" : "pages/user/order",
+			"style" : {
+				"navigationBarTitleText": "我的订单",
 				"disableScroll": true,
 				"app-plus": {
 					"bounce": "none"
-				},
-				"navigationBarTitleText": "我的订单"
+				}
 			}
 		},
 		{
 			"path": "pages/user/profile",
 			"style": {
 				"navigationBarTitleText": "个人资料"
+			}
+		},
+		{
+			"path": "pages/user/orderDetail",
+			"style": {
+				"navigationBarTitleText": "订单详情"
 			}
 		}
 	],
@@ -83,7 +89,7 @@
 		"list": [
 			{
 				"name": "test",
-				"path": "pages/user/order"
+				"path": "pages/user/orderDetail"
 			}
 		]
 	},
