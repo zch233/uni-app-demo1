@@ -30,6 +30,7 @@
 				<view class="userOrder-menu-item">
 					<image mode='widthFix' class="userMenu1" src="/static/img/userMenu1.png"></image>
 					<view>待付款</view>
+					<text>1</text>
 				</view>
 				<view class="userOrder-menu-item">
 					<image mode='widthFix' class="userMenu2" src="/static/img/userMenu2.png"></image>
@@ -47,12 +48,22 @@
 		</view>
 		<view class="userCoupon">
 			<view class="userCoupon-title">我的卡券</view>
-			<view class="userCoupon-item">1</view>
+			<view class="userCoupon-item blue">
+				<view class="userCoupon-item-left">
+					<view class="userCoupon-item-left-price">￥<text>100</text></view>
+					<view class="userCoupon-item-left-tips">满900元可用</view>
+				</view>
+				<view class="userCoupon-item-middle">
+					<view class="userCoupon-item-middle-info">线上洗涤抵用券</view>
+					<view class="userCoupon-item-middle-time">2020.2.3 ~ 2020.2.4</view>
+				</view>
+				<view class="userCoupon-item-right">立即扫码</view>
+			</view>
 		</view>
-		<view class="userSetting">
+		<navigator url="/pages/user/setting" class="userSetting">
 			账户设置
 			<image mode='widthFix' src="/static/img/right.png"></image>
-		</view>
+		</navigator>
 	</view>
 </template>
 
@@ -174,6 +185,24 @@
 		font-size: 26rpx;
 		font-weight: bold;
 		justify-content: space-between;
+		&-item {
+			position: relative;
+			text-align: center;
+		}
+		text {
+			$r: 26rpx;
+			position: absolute;
+			right: -($r / 2);
+			top: -($r / 2);
+			color: #fff;
+			background-color: #F22061;
+			border-radius: 50%;
+			line-height: $r;
+			width: $r;
+			height: $r;
+			line-height: 1;
+			font-size: 22rpx;
+		}
 		image.userMenu1 {
 			width: 80rpx;
 			margin-bottom: 51rpx;
@@ -205,18 +234,54 @@
 		margin-bottom: 32rpx;
 	}
 	&-item {
-		box-shadow: 0 0 10rpx rgba(0, 0, 0, .3);
-		background-repeat: no-repeat;
-		background-size: 100%;
+		box-shadow: 0 0 10rpx 0 rgba(0, 0, 0, .1);
+		background-repeat: repeat-y;
+		background-size: contain;
+		border-radius: 10rpx;
+		overflow: hidden;
+		margin-bottom: 20rpx;
+		@extend %flex;
+		&-left {
+			color: #F22061;
+			font-size: 24rpx;
+			text-align: center;
+			padding: 12rpx 40rpx;
+			border-right: 4rpx dashed #bbb;
+			&-price {
+				font-weight: bold;
+				font-size: 30rpx;
+				margin-bottom: 18rpx;
+				text {
+					font-size: 48rpx;
+				}
+			}
+		}
+		&-middle {
+			flex: 1;
+			padding-left: 40rpx;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			font-size: 24rpx;
+			&-time {
+				color: #bbb;
+				margin-top: 24rpx;
+			}
+		}
+		&-right {
+			color: #fff;
+			width: 2em;
+			padding: 1.66em .8em;
+		}
 	}
-	&-item.blue {
-		background-image: url('~@/static/img/userCouponBlue.png');
+	&-item.blue &-item-right {
+		background-color: #309EEB;
 	}
-	&-item.red {
-		background-image: url('~@/static/img/userCouponRed.png');
+	&-item.red &-item-right {
+		background-color: #F22061;
 	}
-	&-item.disabled {
-		background-image: url('~@/static/img/userCouponDisabled.png');
+	&-item.disabled &-item-right {
+		background-color: #DBDBDB;
 	}
 }
 .userSetting {
