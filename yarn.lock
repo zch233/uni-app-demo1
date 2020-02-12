@@ -5187,6 +5187,11 @@ merge@^1.2.1:
   resolved "https://registry.npm.taobao.org/merge/download/merge-1.2.1.tgz#38bebf80c3220a8a487b6fcfb3941bb11720c145"
   integrity sha1-OL6/gMMiCopIe2/Ps5QbsRcgwUU=
 
+mescroll-uni@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.npm.taobao.org/mescroll-uni/download/mescroll-uni-1.2.1.tgz#0b4fdf81b57df6d8dae0cc60c4e5de8de2bf8362"
+  integrity sha1-C0/fgbV99tja4MxgxOXejeK/g2I=
+
 methods@~1.1.2:
   version "1.1.2"
   resolved "https://registry.npm.taobao.org/methods/download/methods-1.1.2.tgz#5529a4d67654134edcc5266656835b0f851afcee"

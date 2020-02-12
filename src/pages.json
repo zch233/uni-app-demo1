@@ -62,6 +62,16 @@
 			}
 		},
 		{
+			"path": "pages/user/order",
+			"style": {
+				"disableScroll": true,
+				"app-plus": {
+					"bounce": "none"
+				},
+				"navigationBarTitleText": "我的订单"
+			}
+		},
+		{
 			"path": "pages/user/profile",
 			"style": {
 				"navigationBarTitleText": "个人资料"
@@ -73,7 +83,7 @@
 		"list": [
 			{
 				"name": "test",
-				"path": "pages/user/user"
+				"path": "pages/user/order"
 			}
 		]
 	},

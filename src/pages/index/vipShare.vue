@@ -5,7 +5,7 @@
     <uniPopup ref="popup" :maskClick="false">
 			<view class="content-couponWrapper">
 				<view class="content-couponTitle">升级会员好礼！</view>
-				<scroll-view class="content-couponList" scroll-y>
+				<scroll-view class="content-couponList" scroll-y style="height: 100%;width: 100%;">
           <view class="content-couponList-item">
             <view class="content-couponList-item-left">
               <view class="content-couponList-item-left-price">￥<text>50</text></view>

@@ -38,7 +38,7 @@
 				</view>
 				<view class="userOrder-menu-item">
 					<image mode='widthFix' class="userMenu3" src="/static/img/userMenu3.png"></image>
-					<view>待送货</view>
+					<view>待收货</view>
 				</view>
 				<view class="userOrder-menu-item">
 					<image mode='widthFix' class="userMenu4" src="/static/img/userMenu4.png"></image>
