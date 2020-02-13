@@ -77,6 +77,12 @@
 			}
 		},
 		{
+			"path": "pages/user/expressTrack",
+			"style": {
+				"navigationBarTitleText": "物流信息"
+			}
+		},
+		{
 			"path": "pages/user/profile",
 			"style": {
 				"navigationBarTitleText": "个人资料"
@@ -88,7 +94,7 @@
 		"list": [
 			{
 				"name": "test",
-				"path": "pages/user/orderDetail"
+				"path": "pages/user/expressTrack"
 			}
 		]
 	},
