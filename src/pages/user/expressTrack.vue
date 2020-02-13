@@ -114,6 +114,7 @@
       width: 36rpx;
       margin-right: 11rpx;
       margin-top: 4rpx;
+      background-color: #fff;
     }
     &-trackFinall {
       padding-left: 123rpx;
