@@ -3,12 +3,17 @@
 		<view class="userCard">
 			<view class="userCard-userInfo">
 				<image mode='widthFix' class="userCard-userInfo-img" src="/static/img/user.png"></image>
-				<view class="userCard-userInfo-brief">
+				<!-- <view class="userCard-userInfo-brief">
 					<view class="userCard-userInfo-brief-name">
 						游客
 						<image mode='widthFix' src="/static/img/userVip.png"></image>
 					</view>
 					<view class="userCard-userInfo-brief-phone">15919191111</view>
+				</view> -->
+				<view class="userCard-userInfo-brief" @tag="login">
+					<view class="userCard-userInfo-brief-name">
+						<button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">点击注册 / 登陆</button>
+					</view>
 				</view>
 				<view class="userCard-userInfo-rank">普通会员</view>
 			</view>
@@ -68,8 +73,54 @@
 </template>
 
 <script>
+	import { login } from '@/api/user.js'
 	export default {
+		onLaunch () {
+			this.init()
+		},
 		methods: {
+			init () {
+				uni.login({
+					provider: 'weixin',
+					success: async ({ code }) => {
+						console.log(code, 'login')
+						const [error, { data }] = await login({ js_code: code })
+						console.log(error, data, 'result')
+						uni.getUserInfo({
+							provider: 'weixin',
+							success: (infoRes) => {
+								console.log(infoRes, 11)
+								/**
+								 * 实际开发中，获取用户信息后，需要将信息上报至服务端。
+								 * 服务端可以用 userInfo.openId 作为用户的唯一标识新增或绑定用户信息。
+								 */
+								this.toMain(infoRes.userInfo.nickName);
+							},
+							fail() {
+								uni.showToast({
+									icon: 'none',
+									title: '登陆失败'
+								});
+							}
+						});
+					},
+					fail: (err) => {
+						console.error('授权登录失败：' + JSON.stringify(err));
+					}
+				});
+			},
+			getPhoneNumber ({ detail }) {
+				console.log(detail)
+				if (detail.errMsg === 'getPhoneNumber:fail user deny'){
+					uni.showModal({
+							title: '提示',
+							showCancel: false,
+							content: '未授权',
+					})
+				} else {
+					
+				}
+			}
 		}
 	}
 </script>
@@ -126,6 +177,13 @@
 				font-size: 24rpx;
 				margin-top: 14rpx;
 				font-weight: normal;
+			}
+			button {
+				color: #333;
+				background-color: transparent;
+				&::after {
+					border: none;
+				}
 			}
 		}
 		&-rank {
