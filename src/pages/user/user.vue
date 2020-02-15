@@ -1,29 +1,38 @@
 <template>
 	<view class="content">
-		<view class="userCard">
+		<view class="userCard" :class="{ vvip: userVip }">
 			<view class="userCard-userInfo">
-				<image mode='widthFix' class="userCard-userInfo-img" src="/static/img/user.png"></image>
-				<!-- <view class="userCard-userInfo-brief">
+				<image mode='widthFix' class="userCard-userInfo-img" :src="userAvater"></image>
+				<view v-if="hasLogin" class="userCard-userInfo-brief">
 					<view class="userCard-userInfo-brief-name">
-						游客
-						<image mode='widthFix' src="/static/img/userVip.png"></image>
+						{{ userName }}
+						<image mode='widthFix' v-if="userVip" src="/static/img/userVip.png"></image>
 					</view>
-					<view class="userCard-userInfo-brief-phone">15919191111</view>
-				</view> -->
-				<view class="userCard-userInfo-brief" @tag="login">
+					<view v-if="userPhone" class="userCard-userInfo-brief-phone">{{ userPhone }}</view>
+				</view>
+				<view v-if="!hasLogin" class="userCard-userInfo-brief" @tag="login">
 					<view class="userCard-userInfo-brief-name">
-						<button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">点击注册 / 登陆</button>
+						点击注册 / 登陆
+						<!-- <button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber"></button> -->
+						<button open-type="getUserInfo" @getuserinfo="getUserInfo"></button>
 					</view>
 				</view>
-				<view class="userCard-userInfo-rank">普通会员</view>
+				<view class="userCard-userInfo-rank" v-if="userVip">黄金</view>
+				<view class="userCard-userInfo-rank" v-if="!userVip">普通会员</view>
 			</view>
-			<view class="userCard-progressBar">
-				<view class="userCard-progressBar-progress">---</view>
+			<view class="userCard-progressBar" v-if="userVip">
+				<view class="userCard-progressBar-progress">
+					<view class="userCard-progressBar-progress-bg"></view>
+					<view class="userCard-progressBar-progress-main">
+						<view class="userCard-progressBar-progress-main-leftDay">剩余XXX天</view>
+					</view>
+				</view>
 				<view class="userCard-progressBar-time">2020-02-02 到期</view>
 			</view>
 			<view class="userCard-numberBar">
-				<view class="userCard-numberBar-number">NO.00000 0000 0000</view>
-				<view class="userCard-numberBar-button">立即续费</view>
+				<view class="userCard-numberBar-number" v-if="userVip">NO.00000 0000 0000</view>
+				<navigator url="/pages/index/vipPay" class="userCard-numberBar-button" :class="{ noUserVip: !userVip }" v-if="!userVip">立即开通会员</navigator>
+				<navigator url="/pages/index/vipPay" class="userCard-numberBar-button" v-if="userVip">立即续费</navigator>
 			</view>
 		</view>
 		<view class="userOrder">
@@ -53,7 +62,7 @@
 		</view>
 		<view class="userCoupon">
 			<view class="userCoupon-title">我的卡券</view>
-			<view class="userCoupon-item blue">
+			<view class="userCoupon-item blue" v-for="item in couponList" :key="item">
 				<view class="userCoupon-item-left">
 					<view class="userCoupon-item-left-price">￥<text>100</text></view>
 					<view class="userCoupon-item-left-tips">满900元可用</view>
@@ -73,39 +82,37 @@
 </template>
 
 <script>
-	import { login } from '@/api/user.js'
+	import { login, updateUserInfo } from '@/api/user.js'
+	import { mapState, mapMutations } from 'vuex'
+
 	export default {
-		onLaunch () {
-			this.init()
+		computed: {
+			...mapState(['hasLogin', 'forcedLogin', 'userPhone', 'userAvater', 'userName', 'userVip'])
+		},
+		onLoad () {
+			this.getUserInfo()
+		},
+		data () {
+			return {
+				couponList: []
+			}
 		},
 		methods: {
-			init () {
-				uni.login({
+			...mapMutations(['updateUserInfo']),
+			getUserInfo () {
+				uni.showLoading({ title: '加载中' });
+				uni.getUserInfo({
 					provider: 'weixin',
-					success: async ({ code }) => {
-						console.log(code, 'login')
-						const [error, { data }] = await login({ js_code: code })
-						console.log(error, data, 'result')
-						uni.getUserInfo({
-							provider: 'weixin',
-							success: (infoRes) => {
-								console.log(infoRes, 11)
-								/**
-								 * 实际开发中，获取用户信息后，需要将信息上报至服务端。
-								 * 服务端可以用 userInfo.openId 作为用户的唯一标识新增或绑定用户信息。
-								 */
-								this.toMain(infoRes.userInfo.nickName);
-							},
-							fail() {
-								uni.showToast({
-									icon: 'none',
-									title: '登陆失败'
-								});
-							}
-						});
+					success: async ({ userInfo }) => {
+						this.updateUserInfo(userInfo)
+						await updateUserInfo({ nickname: userInfo.nickName, avatar: userInfo.avatarUrl })
+						uni.hideLoading()
 					},
-					fail: (err) => {
-						console.error('授权登录失败：' + JSON.stringify(err));
+					fail() {
+						uni.showToast({
+							icon: 'none',
+							title: '请手动点击登陆 / 注册'
+						});
 					}
 				});
 			},
@@ -118,7 +125,7 @@
 							content: '未授权',
 					})
 				} else {
-					
+					console.log('获取成功')
 				}
 			}
 		}
@@ -135,6 +142,7 @@
 	line-height: 1;
 	background-color: rgb(251, 248, 251);
 	min-height: 100vh;
+	box-sizing: border-box;
 }
 .userCard {
 	color: #fff;
@@ -145,7 +153,7 @@
 	position: relative;
 	z-index: 1;
 	margin-bottom: 38rpx;
-	&::before {
+	&.vvip::before {
 		content: '';
 		left: 40rpx;
 		bottom: 37rpx;
@@ -181,6 +189,11 @@
 			button {
 				color: #333;
 				background-color: transparent;
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100vh;
 				&::after {
 					border: none;
 				}
@@ -198,18 +211,78 @@
 	&-progressBar {
 		@extend %flex;
 		font-size: 24rpx;
+		&-progress {
+			&-bg {
+				width: 320rpx;
+				height: 10rpx;
+				background-color: rgb(184, 157, 106);
+				position: relative;
+				top: 10rpx;
+				left: 30rpx;
+				&::before, &::after {
+					content: 'VIP';
+					position: absolute;
+					top: 50%;
+					transform: translateY(-50%);
+					width: 32rpx;
+					font-size: 12rpx;
+					height: 16rpx;
+					line-height: 16rpx;
+					text-align: center;
+					border-radius: 16rpx;
+					z-index: 1;
+				}
+				&::before {
+					left: -30rpx;
+					background-color: #fff;
+					color: rgb(184, 157, 106);
+				}
+				&::after {
+					right: -30rpx;
+					background-color: rgb(184, 157, 106);
+				}
+			}
+			&-main {
+				position: relative;
+				background-image: linear-gradient(to bottom, #fff 0%, #fff 50%, transparent 50%, transparent 100%);
+				width: 30%;
+				height: 26rpx;
+				left: 30rpx;
+				border-right: 2rpx solid #fff;
+				&-leftDay {
+					position: absolute;
+					right: -44rpx;
+					width: 88rpx;
+					background-color: #fff;
+					color: rgb(184, 157, 106);
+					line-height: 16rpx;
+					height: 16rpx;
+					bottom: -16rpx;
+					font-size: 16rpx;
+					text-align: center;
+					border-radius: 16rpx;
+				}
+			}
+		}
+		&-time {
+			margin-left: 70rpx;
+			margin-top: -5rpx;
+		}
 	}
 	&-numberBar {
 		@extend %flex;
 		justify-content: space-between;
 		color: #896837;
 		font-weight: 26rpx;
-		margin-top: 74rpx;
+		margin-top: 64rpx;
 		font-weight: bold;
 		&-button {
 			border: 3rpx solid #896837;
 			padding: 15rpx 22rpx;
 			border-radius: 50rpx;
+			&.noUserVip {
+				margin-top: 68rpx;
+			}
 		}
 	}
 }
