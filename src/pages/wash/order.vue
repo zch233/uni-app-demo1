@@ -24,11 +24,11 @@
 			</view>
 		</view>
 		<view class="details">
-			<view class="details-item" v-for="item in orderGoodList" :key="item.id">
+			<view class="details-item" v-for="good in orderGoodList" :key="good.id">
 				<image mode='widthFix' class="details-item-img" src="/static/img/good.png"></image>
-				<view class="details-item-name">{{ item.title }}</view>
-				<view class="details-item-total">x{{ item.num }}</view>
-				<view class="details-item-price">￥<text>{{ (item.num * item.discounted_price).toFixed(2) }}</text></view>
+				<view class="details-item-name">{{ good.title }}</view>
+				<view class="details-item-total">x{{ good.num }}</view>
+				<view class="details-item-price">￥<text>{{ (good.num * good.discounted_price).toFixed(2) }}</text></view>
 			</view>
 			<view class="details-discountBar">
 				<view class="details-discountBar-label">红包/抵用券</view>
@@ -43,23 +43,14 @@
 			<view class="footer-price"><text>¥100</text>已优惠¥100</view>
 			<view class="footer-button" @tap="payNow">确认支付</view>
 		</view>
-		<uni-popup ref="popup" class="timePopup" :maskClick="false" type="bottom">
+		<uni-popup ref="popup" class="timePopup" type="bottom">
 			<view class="timeTitle">选择上门时间</view>
 			<view class="timeContent">
 				<view class="timeContent-left">
-					<view class="timeContent-left-time">今天（周一）</view>
-					<view class="timeContent-left-time">今天（周二）</view>
-					<view class="timeContent-left-time">今天（周三）</view>
+					<view class="timeContent-left-time" :class="{active: index === leftTimeIndex}" v-for="(item, index) in leftTime" @tap="selectLeftTime(index)" :key="index">{{ item }}</view>
 				</view>
 				<scroll-view scroll-y class="timeContent-right" scroll-with-animation>
-					<view class="timeContent-right-time">14:00</view>
-					<view class="timeContent-right-time">14:00</view>
-					<view class="timeContent-right-time">14:00</view>
-					<view class="timeContent-right-time">14:00</view>
-					<view class="timeContent-right-time">14:00</view>
-					<view class="timeContent-right-time">14:00</view>
-					<view class="timeContent-right-time">14:00</view>
-					<view class="timeContent-right-time">14:00</view>
+					<view class="timeContent-right-time" :class="{active: index === rightTimeIndex}" v-for="(item, index) in rightTime" @tap="selectRightTime(index)" :key="index"><text v-show="leftTimeIndex === 0 && index === 0">尽早上门</text>{{ item }}</view>
 				</scroll-view>
 			</view>
     </uni-popup>
@@ -71,16 +62,27 @@
 	import { mapState } from 'vuex'
 	import uniPopup from 'components/uni-popup/uni-popup.vue'
 
+	const getTimeList = (hour = 0) => [...new Array(24).keys()].splice(hour).map(v => v < 10 ? `0${v}` : v).map(v => ['15', '30', '45'].map(vv => `${v}:${vv}`)).reduce((a, b) => a.concat(b), [])
+	const normalRightTime = getTimeList()
+	const nowRightTime = getTimeList(new Date().getHours())
+	const day = ['日', '一', '二', '三', '四', '五', '六']
+	const nowDay = new Date().getDay()
+	const nowLeftTime = [`今天（周${day[nowDay]}）`, `明天（周${day[nowDay + 1]}）`, `后天（周${day[nowDay + 2]}）`]
 	export default {
 		components: { uniPopup },
 		data () {
 			return {
 				orderGoodList: [],
 				addressInfo: {},
+				leftTime: nowLeftTime,
+				leftTimeIndex: 0,
+				rightTime: nowRightTime,
+				rightTimeIndex: 0,
 			}
 		},
 		onLoad (e) {
-			console.log(e)
+			console.log(e.id)
+			this.getOrderInfo(e.id)
 		},
 		methods: {
 			showTimeOption () {
@@ -104,6 +106,13 @@
 						uni.showToast({ icon: 'none', title: '获取地址失败' })
 					}
 				})
+			},
+			selectLeftTime (index) {
+				this.leftTimeIndex = index
+			},
+			selectRightTime (index) {
+				this.rightTimeIndex = index
+				this.rightTime = index === 0 ? nowRightTime : normalRightTime
 			},
 			async payNow () {
 				uni.showLoading({ title: '加载中' });
@@ -320,6 +329,9 @@
 		background-color: rgb(208, 208, 208);
 		&-time {
 			padding: 20rpx 30rpx;
+			&.active {
+				background-color: #fff;
+			}
 		}
 	}
 	&-right {
@@ -328,7 +340,24 @@
 		&-time {
 			padding: 20rpx 0;
 			margin-right: 30rpx;
-			border-bottom: 2rpx solid #f2f2f2; 
+			border-bottom: 2rpx solid #f2f2f2;
+			position: relative;
+			text {
+				padding-right: 20rpx;
+				border-right: 2rpx solid #f2f2f2;
+				margin-right: 20rpx;
+			}
+			&.active::before {
+				position: absolute;
+				content: '';
+				width: 24rpx;
+				height: 24rpx;
+				border-radius: 50%;
+				background: radial-gradient(ellipse at center, rgb(243, 31, 100) 0,rgb(243, 31, 100) 45%,rgb(243, 31, 100) 45%,#ffffff 45%,#ffffff 55%,rgb(243, 31, 100) 55%,rgb(243, 31, 100) 100%);
+				right: 50rpx;
+				top: 50%;
+				transform: translateY(-50%);
+			}
 		}
 	}
 }

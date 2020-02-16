@@ -97,14 +97,13 @@
         this.setOrderGoodList(this.goodList.filter(v => v.num !== 0))
         this.goodList.filter(v => v.num !== 0).map(v => (goods_info[v.id] = v.num))
         uni.showLoading({ title: '正在生成订单' });
-        const [error , { data }] = await createOrder({ goods_info })
+        const [error , { data }] = await createOrder({ goods_info: JSON.stringify(goods_info) })
         if (error) {
           uni.showToast({ icon: 'none', title: '订单生成失败' })
           return
         }
         uni.hideLoading();
-        console.log({error, data})
-        uni.navigateTo({ url: `/pages/wash/order?id=${data}` })
+        uni.navigateTo({ url: `/pages/wash/order?id=${data.data.id}` })
       }
     }
 	}
