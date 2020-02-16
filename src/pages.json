@@ -27,7 +27,8 @@
 		{
 			"path": "pages/wash/wash",
 			"style": {
-				"navigationBarTitleText": "洗涤"
+				"navigationBarTitleText": "洗涤",
+				"enablePullDownRefresh": true
 			}
 		},
 		{
@@ -94,7 +95,7 @@
 		"list": [
 			{
 				"name": "test",
-				"path": "pages/wash/wash"
+				"path": "pages/wash/order"
 			}
 		]
 	},

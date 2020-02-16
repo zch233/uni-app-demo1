@@ -1,14 +1,14 @@
 <template>
 	<view class="content">
 		<view class="header">
-			<view class="header-addressBar" @click="chooseAddress">
+			<view class="header-addressBar" @tap="chooseAddress">
 				<view class="header-addressBar-address">
 					<view class="header-addressBar-address-home">极地创新中心</view>
 					<view class="header-addressBar-address-name">姓名（先生） 156xxxxxxxx</view>
 				</view>
 				<image mode='widthFix' class="right2" src="/static/img/right2.png"></image>
 			</view>
-			<view class="header-time">
+			<view class="header-time" @tap="showTimeOption">
 				<view class="header-time-label">取货时间</view>
 				<view class="header-time-value">
 					<view>约10：:30</view>
@@ -24,11 +24,11 @@
 			</view>
 		</view>
 		<view class="details">
-			<view class="details-item">
+			<view class="details-item" v-for="item in orderGoodList" :key="item.id">
 				<image mode='widthFix' class="details-item-img" src="/static/img/good.png"></image>
-				<view class="details-item-name">名称</view>
-				<view class="details-item-total">x1</view>
-				<view class="details-item-price">￥<text>69</text></view>
+				<view class="details-item-name">{{ item.title }}</view>
+				<view class="details-item-total">x{{ item.num }}</view>
+				<view class="details-item-price">￥<text>{{ (item.num * item.discounted_price).toFixed(2) }}</text></view>
 			</view>
 			<view class="details-discountBar">
 				<view class="details-discountBar-label">红包/抵用券</view>
@@ -41,35 +41,78 @@
 		<textarea class="remark" placeholder-style="color:#BFBFBF" placeholder="备注"/>
 		<view class="footer">
 			<view class="footer-price"><text>¥100</text>已优惠¥100</view>
-			<view class="footer-button">确认支付</view>
+			<view class="footer-button" @tap="payNow">确认支付</view>
 		</view>
+		<uni-popup ref="popup" class="timePopup" :maskClick="false" type="bottom">
+			<view class="timeTitle">选择上门时间</view>
+			<view class="timeContent">
+				<view class="timeContent-left">
+					<view class="timeContent-left-time">今天（周一）</view>
+					<view class="timeContent-left-time">今天（周二）</view>
+					<view class="timeContent-left-time">今天（周三）</view>
+				</view>
+				<scroll-view scroll-y class="timeContent-right" scroll-with-animation>
+					<view class="timeContent-right-time">14:00</view>
+					<view class="timeContent-right-time">14:00</view>
+					<view class="timeContent-right-time">14:00</view>
+					<view class="timeContent-right-time">14:00</view>
+					<view class="timeContent-right-time">14:00</view>
+					<view class="timeContent-right-time">14:00</view>
+					<view class="timeContent-right-time">14:00</view>
+					<view class="timeContent-right-time">14:00</view>
+				</scroll-view>
+			</view>
+    </uni-popup>
 	</view>
 </template>
 
 <script>
+	import { getOrderList } from '@/api/user.js'
 	import { mapState } from 'vuex'
+	import uniPopup from 'components/uni-popup/uni-popup.vue'
 
 	export default {
-		computed: {
-			...mapState(['orderGoodList'])
+		components: { uniPopup },
+		data () {
+			return {
+				orderGoodList: [],
+				addressInfo: {},
+			}
 		},
-		onLoad() {
-			console.log(this.orderGoodList)
+		onLoad (e) {
+			console.log(e)
 		},
 		methods: {
+			showTimeOption () {
+				this.$refs.popup.open()
+			},
+			async getOrderInfo (id) {
+				uni.showLoading({ title: '正在获取订单' });
+        const [error , { data }] = await getOrderList({ id })
+        if (error) {
+          uni.showToast({ icon: 'none', title: '订单获取失败' })
+          return
+        }
+        uni.hideLoading();
+			},
 			chooseAddress () {
 				uni.chooseAddress({
 					success(res) {
-						console.log(res.userName)
-						console.log(res.postalCode)
-						console.log(res.provinceName)
-						console.log(res.cityName)
-						console.log(res.countyName)
-						console.log(res.detailInfo)
-						console.log(res.nationalCode)
-						console.log(res.telNumber)
+						this.addressInfo = res
+					},
+					fail() {
+						uni.showToast({ icon: 'none', title: '获取地址失败' })
 					}
 				})
+			},
+			async payNow () {
+				uni.showLoading({ title: '加载中' });
+        const [error , { data }] = await payNow({ pay_type: 1, express: 1, address: this.addressInfo.provinceName + this.addressInfo.cityName + this.addressInfo.countyName + this.addressInfo.detailInfo })
+        if (error) {
+          uni.showToast({ icon: 'none', title: '加载失败' })
+          return
+        }
+        uni.hideLoading();
 			}
     }
   }
@@ -256,6 +299,37 @@
 		font-size: 36rpx;
 		font-weight: bold;
 		padding: 20rpx;
+	}
+}
+.timeTitle {
+	color: #333333;
+	font-size: 26rpx;
+	line-height: 1;
+	padding: 20rpx 0;
+	text-align: center;
+	background-color: rgb(218, 218, 218);
+}
+.timeContent {
+	display: flex;
+	color: #333333;
+	font-size: 26rpx;
+	line-height: 1;
+	height: 40vh;
+	background-color: #fff;
+	&-left {
+		background-color: rgb(208, 208, 208);
+		&-time {
+			padding: 20rpx 30rpx;
+		}
+	}
+	&-right {
+		flex: 1;
+		margin-left: 50rpx;
+		&-time {
+			padding: 20rpx 0;
+			margin-right: 30rpx;
+			border-bottom: 2rpx solid #f2f2f2; 
+		}
 	}
 }
 </style>

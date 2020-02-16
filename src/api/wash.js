@@ -1,9 +1,13 @@
 import request from '../request'
 
-export async function getGoodList (data) {
-  return await request('/collect/get_goods', data)
+export function getGoodList (data) {
+  return request('/collect/get_goods', data)
 }
 
-export async function createOrder (data) {
-  return await request('/collect/add_order', data)
+export function createOrder (data) {
+  return request('/collect/add_order', data)
+}
+
+export function payNow (data) {
+  return request('/collect/pay', data)
 }

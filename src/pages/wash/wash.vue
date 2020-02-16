@@ -64,9 +64,10 @@
     },
     methods: {
       ...mapMutations(['setOrderGoodList']),
-      async getGoodList () {
+      async getGoodList (refresh) {
         uni.showLoading({ title: '正在获取商品' });
         const [error, { data }] = await getGoodList()
+        if (refresh) uni.stopPullDownRefresh()
         if (error) {
           uni.showToast({ icon: 'none', title: '获取失败' })
           return
@@ -88,6 +89,9 @@
           product.num += 1
         }
       },
+      onPullDownRefresh() {
+        this.getGoodList('refresh')
+      },
       async settleOrder () {
         const goods_info = {}
         this.setOrderGoodList(this.goodList.filter(v => v.num !== 0))
@@ -99,8 +103,8 @@
           return
         }
         uni.hideLoading();
-        console.log(data)
-        uni.navigateTo({ url: '/pages/wash/order' })
+        console.log({error, data})
+        uni.navigateTo({ url: `/pages/wash/order?id=${data}` })
       }
     }
 	}
