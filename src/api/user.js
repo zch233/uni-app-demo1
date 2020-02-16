@@ -11,3 +11,7 @@ export async function logout (data) {
 export async function updateUserInfo (data) {
   return await request('/collect/user_edit', data)
 }
+
+export async function getOrderList (data) {
+  return await request('/collect/get_order', data)
+}

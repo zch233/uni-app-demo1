@@ -47,7 +47,15 @@
 </template>
 
 <script>
+	import { mapState } from 'vuex'
+
 	export default {
+		computed: {
+			...mapState(['orderGoodList'])
+		},
+		onLoad() {
+			console.log(this.orderGoodList)
+		},
 		methods: {
 			chooseAddress () {
 				uni.chooseAddress({
@@ -73,6 +81,7 @@
 	background-color: rgb(243, 240, 243);
 	padding-top: 20rpx;
 	padding-bottom: 84rpx;
+	box-sizing: border-box;
 }
 .right2 {
 	width: 18rpx;
@@ -246,7 +255,7 @@
 		border-radius: 10rpx;
 		font-size: 36rpx;
 		font-weight: bold;
-		padding: 14rpx 20rpx;
+		padding: 20rpx;
 	}
 }
 </style>

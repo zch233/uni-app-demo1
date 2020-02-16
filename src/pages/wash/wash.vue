@@ -12,18 +12,18 @@
       </swiper-item>
     </swiper>
     <view class="product-list">
-      <view class="product-list-item">
+      <view class="product-list-item" v-for="item in goodList" :key="item.id">
         <image mode='widthFix' class="product-list-item-img" src="/static/img/good.png"></image>
         <view class="product-list-item-info">
-          <view class="product-list-item-info-title">短袖</view>
-          <view class="product-list-item-info-des">千万不要华丽低俗，因为从衣服可以看出一个人。</view>
+          <view class="product-list-item-info-title">{{ item.title }}</view>
+          <view class="product-list-item-info-des">{{ item.desc }}</view>
           <view class="product-list-item-info-des">好评率：100%</view>
           <view class="product-list-item-info-priceBar">
-            <view class="product-list-item-info-priceBar-price">￥<text>29</text></view>
+            <view class="product-list-item-info-priceBar-price">￥<text>{{ item.discounted_price }}</text></view>
             <view class="product-list-item-info-priceBar-countBar">
-              <image mode='widthFix' class="product-list-item-info-priceBar-countBar-minus" src="/static/img/minus.png"></image>
-              <view class="product-list-item-info-priceBar-countBar-count">0</view>
-              <image mode='widthFix' class="product-list-item-info-priceBar-countBar-add" src="/static/img/add.png"></image>
+              <image mode='widthFix' @tap="calculate(item, 'minus')" v-show="item.num > 0" class="product-list-item-info-priceBar-countBar-minus" src="/static/img/minus.png"></image>
+              <view class="product-list-item-info-priceBar-countBar-count" v-show="item.num > 0">{{ item.num }}</view>
+              <image mode='widthFix' @tap="calculate(item, 'add')" class="product-list-item-info-priceBar-countBar-add" src="/static/img/add.png"></image>
             </view>
           </view>
         </view>
@@ -36,21 +36,70 @@
         <view class="totalBar-info-tips">共选择{{ totalCount }}件</view>
         <view class="totalBar-info-price">￥{{ totalPrice }}</view>
       </view>
-      <view class="totalBar-button" @click="settleOrder">去结算</view>
+      <view class="totalBar-button" :class="{disabled: totalCount <= 0 || totalPrice <= 0}" @click="settleOrder">去结算</view>
     </view>
 	</view>
 </template>
 
 <script>
+  import { getGoodList, createOrder } from '@/api/wash.js';
+  import { mapMutations } from 'vuex'
+
 	export default {
     data () {
       return {
-        totalCount: 0,
-        totalPrice: 0
+        goodList: [],
       }
     },
+    computed: {
+      totalCount () {
+        return this.goodList.map(v => v.num).reduce((a, b) => a + b, 0 )
+      },
+      totalPrice () {
+        return this.goodList.map(v => Number((v.num * v.discounted_price).toFixed(2))).reduce((a, b) => a + b, 0 )
+      }
+    },
+    onLoad () {
+      this.getGoodList()
+    },
     methods: {
-      settleOrder () {
+      ...mapMutations(['setOrderGoodList']),
+      async getGoodList () {
+        uni.showLoading({ title: '正在获取商品' });
+        const [error, { data }] = await getGoodList()
+        if (error) {
+          uni.showToast({ icon: 'none', title: '获取失败' })
+          return
+        }
+        this.goodList = this.handleGoodListData(data.data.data)
+        uni.hideLoading();
+      },
+      handleGoodListData (data) {
+        data.map(v => (v.num = 0))
+        return data
+      },
+      calculate(product, operator) {
+        if (operator === 'minus') {
+          product.num -= 1
+          if (product.num <= 0) {
+            product.num = 0
+          }
+        } else if (operator === 'add') {
+          product.num += 1
+        }
+      },
+      async settleOrder () {
+        const goods_info = {}
+        this.setOrderGoodList(this.goodList.filter(v => v.num !== 0))
+        this.goodList.filter(v => v.num !== 0).map(v => (goods_info[v.id] = v.num))
+        uni.showLoading({ title: '正在生成订单' });
+        const [error , { data }] = await createOrder({ goods_info })
+        if (error) {
+          uni.showToast({ icon: 'none', title: '订单生成失败' })
+          return
+        }
+        uni.hideLoading();
+        console.log(data)
         uni.navigateTo({ url: '/pages/wash/order' })
       }
     }
@@ -107,8 +156,9 @@
           }
           &-count {
             color:#333;
-            margin: 0 19rpx;
             font-weight: normal;
+            width: 2.2em;
+            text-align: center;
           }
           &-add {
             width: 30rpx;
@@ -167,11 +217,12 @@
   }
   &-button {
     margin-right: 30rpx;
-    background-color: rgb(104, 104, 104);
+    background-color: rgb(242, 26, 97);
     border-radius: 16rpx;
     padding: 15rpx 40rpx;
-    &.active {
-      background-color: rgb(242, 26, 97);
+    &.disabled {
+      pointer-events: none;
+      background-color: rgb(104, 104, 104);
     }
   }
 }

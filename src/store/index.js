@@ -16,6 +16,7 @@ const store = new Vuex.Store({
 		userVip: false,
 		userPhone: '',
 		userInfo: {},
+		orderGoodList: [],
 	},
 	mutations: {
 		login(state, data) {
@@ -39,6 +40,9 @@ const store = new Vuex.Store({
 			state.userPhone = ''
 			state.userInfo = {}
 			state.hasLogin = false;
+		},
+		setOrderGoodList(state, data) {
+			state.orderGoodList = data
 		}
 	},
 	actions: {
