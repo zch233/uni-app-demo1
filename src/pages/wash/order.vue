@@ -194,7 +194,7 @@
           return
 				}
 				if (data.code !== 'success') {
-					uni.showToast({ icon: 'none', title: data.data })
+					uni.showToast({ icon: 'none', title: data.msg })
 					return
 				}
 				uni.redirectTo({ url: `/pages/wash/paySuccess?id=${this.orderInfo.id}` })
