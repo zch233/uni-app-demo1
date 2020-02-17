@@ -63,7 +63,11 @@
 
 <script>
 	export default {
+		onLoad (e) {
+			console.log(e.id, 'id')
+		},
 		methods: {
+			async getOrderDetail () {}
     }
 	}
 </script>

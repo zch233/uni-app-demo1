@@ -1,29 +1,22 @@
-<!-- 商品列表组件 <pd-list :list="xx"></pd-list> -->
 <template>
-	<!-- <view class="pd-list">
-		<view class="pd-li" v-for="pd in list" :key="pd.id">
-			<image class="pd-img" :src="pd.pdImg" mode="widthFix"/>
-			<view class="pd-name">{{pd.pdName}}</view>
-			<text class="pd-price">{{pd.pdPrice}} 元</text>
-			<text class="pd-sold">已售{{pd.pdSold}}件</text>
-		</view>
-	</view> -->
 	<view class="scroll-items">
-		<view class="scroll-item" v-for="pd in list" :key="pd.id">
+		<view class="scroll-item" v-for="good in list" :key="good.id" @tap="viewDetail(good)">
 			<view class="scroll-item-title">
-				<view class="scroll-item-title-id">123456789123</view>
-				<view class="scroll-item-title-status">待支付</view>
+				<view class="scroll-item-title-id">{{ good.order_id }}</view>
+				<view class="scroll-item-title-status">{{ status[good.status] }}</view>
 			</view>
 			<view class="scroll-item-info">
 				<image src="/static/img/good.png"></image>
 				<view>
-					<view class="scroll-item-info-des">上衣×2，鞋子×1，裤子×1，普通外套×1， 皮革外套×1</view>
-					<view class="scroll-item-info-total">共计6件商品合计<text>￥<text>199</text></text></view>
+					<view class="scroll-item-info-des">{{ good.goods_detail.map(v => `${v.title}x${v.buy_number}`).join('，') }}</view>
+					<view class="scroll-item-info-total">共计{{ good.goods_detail.map(v => v.buy_number).reduce((a, b) => a + b, 0) }}件商品合计<text>￥<text>{{ good.real_price }}</text></text></view>
 				</view>
 			</view>
-			<view class="scroll-item-bottom">
-				<view class="scroll-item-bottom-button normal">取消订单</view>
-				<view class="scroll-item-bottom-button highLight">去支付</view>
+			<view class="scroll-item-bottom" v-if="good.status !== 0">
+				<view class="scroll-item-bottom-button normal" v-if="good.status < 3 " @tap.stop="cancelOrder(item)">取消订单</view>
+				<view class="scroll-item-bottom-button normal" v-if="good.status > 3" @tap.stop="viewExpress(item)">查看物流</view>
+				<view class="scroll-item-bottom-button highLight" v-if="good.status === 1" @tap.stop="payOrder(item)">去支付</view>
+				<view class="scroll-item-bottom-button highLight" v-if="good.status === 5" @tap.stop="confirmOrder(item)">确认收货</view>
 			</view>
 		</view>
 	</view>
@@ -38,7 +31,33 @@
 					return []
 				}
 			}
-		}
+    },
+    data () {
+      return {
+        status: ['订单已取消', '未付款', '已付款', '已揽件', '门店签收', '门店发货', '用户签收'],
+      }
+    },
+    methods: {
+      viewDetail (good) {
+        if (good.status === 1) {
+          uni.navigateTo({ url: `/pages/wash/order?id=${good.id}` })
+        } else {
+          uni.navigateTo({ url: `/pages/user/orderDetail?id=${good.id}` })
+        }
+      },
+      cancelOrder (good) {
+        uni.navigateTo({ url: `/pages/user/orderDetail?id=${good.id}` })
+      },
+      viewExpress (good) {
+        uni.navigateTo({ url: `/pages/user/expressTrack?id=${good.id}` })
+      },
+      payOrder (good) {
+        uni.navigateTo({ url: `/pages/wash/order?id=${good.id}` })
+      },
+      confirmOrder (good) {
+        uni.navigateTo({ url: `/pages/user/orderDetail?id=${good.id}` })
+      }
+    }
 	}
 </script>
 

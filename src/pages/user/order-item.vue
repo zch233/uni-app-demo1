@@ -21,6 +21,7 @@
 	import GoodList from "@/components/other/good-list.vue";
 	import MescrollUni from "@/components/mescroll-uni/mescroll-uni.vue"
 	import {apiSearch} from "@/api/mock.js"
+	import { getOrderList } from '@/api/user.js'
 	
 	export default {
 		mixins: [MescrollMixin], // 使用mixin (在main.js注册全局组件)
@@ -47,7 +48,7 @@
 				},
 				goods: [], //列表数据
 				isInit: false, // 列表是否已经初始化
-				scrollY: 0
+				scrollY: 0,
 			}
 		},
 		props:{
@@ -58,7 +59,8 @@
 				default(){
 					return 0
 				}
-			}
+			},
+			status: Number,
 		},
 		watch:{
 			// 监听下标的变化
@@ -71,12 +73,9 @@
 		},
 		mounted() {
 			// 第一个tab,自动加载数据
-			console.log(1, this.i)
 			if(this.i === 0){
 				this.isInit = true; // 标记为true
-				console.log(this.mescroll)
 				this.mescroll.triggerDownScroll();
-				console.log(122222)
 			}
 		},
 		methods: {
@@ -88,20 +87,29 @@
 				this.mescroll.resetUpScroll()
 			},
 			/*上拉加载的回调: 其中page.num:当前页 从1开始, page.size:每页数据条数,默认10 */
-			upCallback(page) {
-				console.log(1111111111)
+			async upCallback(page) {
 				//联网加载数据
-				let keyword = this.tabs[this.i]
-				apiSearch(page.num, page.size, keyword).then(curPageData=>{
-					//联网成功的回调,隐藏下拉刷新和上拉加载的状态;
-					this.mescroll.endSuccess(curPageData.length);
-					//设置列表数据
-					if(page.num == 1) this.goods = []; //如果是第一页需手动制空列表
-					this.goods=this.goods.concat(curPageData); //追加新数据
-				}).catch(()=>{
-					//联网失败, 结束加载
+				const [error, { data }] = await getOrderList({ page_size: page.size, current_page: page.num, status: this.status })
+				if (error) {
 					this.mescroll.endErr();
-				})
+					return
+				}
+				this.mescroll.endSuccess(data.data.data.length);
+				//设置列表数据
+				//联网成功的回调,隐藏下拉刷新和上拉加载的状态;
+				if(page.num == 1) this.goods = []; //如果是第一页需手动制空列表
+				this.goods=this.goods.concat(data.data.data); //追加新数据
+				// let keyword = this.tabs[this.i]
+				// apiSearch(page.num, page.size, keyword).then(curPageData=>{
+				// 	this.mescroll.endSuccess(curPageData.length);
+				// 	//设置列表数据
+				// 	//联网成功的回调,隐藏下拉刷新和上拉加载的状态;
+				// 	if(page.num == 1) this.goods = []; //如果是第一页需手动制空列表
+				// 	this.goods=this.goods.concat(curPageData); //追加新数据
+				// }).catch(()=>{
+				// 	//联网失败, 结束加载
+				// 	this.mescroll.endErr();
+				// })
 			},
 			//点击空布局按钮的回调
 			emptyClick(){

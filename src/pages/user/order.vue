@@ -4,22 +4,27 @@
 		<swiper :style="{height: height}" :current="tabIndex" @change="swiperChange">
 			<!--全部 -->
 			<swiper-item>
-				<mescroll-item :i="0" :index="tabIndex" :tabs="tabs"></mescroll-item>
+				<mescroll-item :i="0" :status="99" :index="tabIndex" :tabs="tabs"></mescroll-item>
 			</swiper-item>
 			
-			<!-- 奶粉 -->
+			<!-- 待支付 -->
 			<swiper-item>
-				<mescroll-item :i="1" :index="tabIndex" :tabs="tabs"></mescroll-item>
+				<mescroll-item :i="1" :status="1" :index="tabIndex" :tabs="tabs"></mescroll-item>
 			</swiper-item>
 			
-			<!-- 面膜 -->
+			<!-- 待取货 -->
 			<swiper-item>
-				<mescroll-item :i="2" :index="tabIndex" :tabs="tabs"></mescroll-item>
+				<mescroll-item :i="2" :status="2" :index="tabIndex" :tabs="tabs"></mescroll-item>
 			</swiper-item>
 			
-			<!-- 图书 -->
+			<!-- 待收货 -->
 			<swiper-item>
-				<mescroll-item :i="3" :index="tabIndex" :tabs="tabs"></mescroll-item>
+				<mescroll-item :i="3" :status="5" :index="tabIndex" :tabs="tabs"></mescroll-item>
+			</swiper-item>
+
+			<!-- 待评价 -->
+			<swiper-item>
+				<mescroll-item :i="4" :status="6" :index="tabIndex" :tabs="tabs"></mescroll-item>
 			</swiper-item>
 		</swiper>
 	</view>
