@@ -65,16 +65,19 @@
 		</view>
 		<view class="userCoupon">
 			<view class="userCoupon-title">我的卡券</view>
-			<view class="userCoupon-item blue" v-for="item in couponList" :key="item">
+			<view class="userCoupon-item" :class="[item.type === 1 ? 'blue' : 'red']" v-for="item in couponList" :key="item" @tap="useUserCoupon(item)">
 				<view class="userCoupon-item-left">
-					<view class="userCoupon-item-left-price">￥<text>100</text></view>
-					<view class="userCoupon-item-left-tips">满900元可用</view>
+					<view class="userCoupon-item-left-price">￥<text>{{ item.coupon_price }}</text></view>
+					<view class="userCoupon-item-left-tips">满{{ item.condition }}元可用</view>
 				</view>
 				<view class="userCoupon-item-middle">
-					<view class="userCoupon-item-middle-info">线上洗涤抵用券</view>
-					<view class="userCoupon-item-middle-time">2020.2.3 ~ 2020.2.4</view>
+					<view class="userCoupon-item-middle-info">{{ item.coupon_name }}</view>
+					<view class="userCoupon-item-middle-time">{{ item.coupon_start_time }} ~ {{ item.coupon_end_time }}</view>
 				</view>
-				<view class="userCoupon-item-right">立即扫码</view>
+				<view class="userCoupon-item-right">{{ item.type === 1 ? '立即使用' : '立即扫码' }}</view>
+			</view>
+			<view class="userCoupon-more">
+				<image mode='widthFix' @tap="getCouponMore" src="/static/img/userCouponMore.png"></image>
 			</view>
 		</view>
 		<navigator url="/pages/user/setting" class="userSetting">
@@ -85,7 +88,7 @@
 </template>
 
 <script>
-	import { login, updateUserInfo, getUserInfo } from '@/api/user.js'
+	import { login, updateUserInfo, getUserInfo, getCouponList } from '@/api/user.js'
 	import { mapState } from 'vuex'
 
 	export default {
@@ -95,6 +98,7 @@
 		onLoad () {
 			this.getWxUserInfo()
 			this.getUserInfo()
+			this.getUserCoupon()
 		},
 		data () {
 			return {
@@ -125,6 +129,20 @@
 					}
 				});
 			},
+			async getUserCoupon () {
+				uni.showLoading({ title: '加载中' });
+				const [error, { data }] = await getCouponList({ status: 2, page_size: 999 })
+        uni.hideLoading();
+        if (error) {
+          uni.showToast({ icon: 'none', title: '获取失败' })
+          return
+        }
+				this.couponList = data.data.data
+				this.couponList.map(v => {
+					v.coupon_start_time = new Date(v.coupon_start).toLocaleDateString().replace(/\//g, ".")
+					v.coupon_end_time = new Date(v.coupon_end).toLocaleDateString().replace(/\//g, ".")
+				})
+			},
 			async getUserInfo (refresh) {
 				uni.showLoading({ title: '加载中' });
 				const [error, { data }] = await getUserInfo()
@@ -136,6 +154,10 @@
         }
         this.userInfo = data.data.user_info
         this.orderInfo = data.data.order_count
+			},
+			getCouponMore () {},
+			useUserCoupon (item) {
+				uni.navigateTo({ url: '/pages/wash/wash' })
 			},
 			getPhoneNumber ({ detail }) {
 				console.log(detail)
@@ -383,6 +405,12 @@
 	color: #333;
 	padding: 38rpx 0;
 	border-bottom: 2rpx solid #f2f2f2;
+	&-more {
+		text-align: center;
+		image {
+			width: 50rpx;
+		}
+	}
 	&-title {
 		font-weight: bold;
 		font-size: 34rpx;
