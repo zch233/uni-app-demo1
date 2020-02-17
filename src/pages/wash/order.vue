@@ -71,6 +71,7 @@
 					</view>
 					<view class="couponList-item-right">立即使用</view>
 				</view>
+				<text @tap="chooseCoupon({})" class="couponNotUse">现在不使用</text>
 			</scroll-view>
     </uni-popup>
 	</view>
@@ -121,12 +122,10 @@
 			},
 			showCouponOption () {
 				this.$refs.couponPopup.open()
-				this.getCouponList()
+				this.couponList.length <= 0 && this.getCouponList()
 			},
 			bindTextAreaBlur (e) {
 				this.remark = e.detail.value
-				console.log(e.detail.value)
-				console.log(this.remark)
 			},
 			async getCouponList () {
 				uni.showLoading({ title: '加载中' });
@@ -447,6 +446,16 @@
 	height: 100vh;
 	background-color: #fff;
 	box-sizing: border-box;
+	.couponNotUse {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		font-size: 30rpx;
+		text-align: center;
+		line-height: 100rpx;
+		box-shadow: 0 0 10rpx 0 rgba(0, 0, 0, .1);
+	}
 	&-item {
 		box-shadow: 0 0 10rpx 0 rgba(0, 0, 0, .1);
 		background-repeat: repeat-y;
