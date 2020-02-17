@@ -13,17 +13,40 @@
 				</view>
 			</view>
 			<view class="scroll-item-bottom" v-if="good.status !== 0">
-				<view class="scroll-item-bottom-button normal" v-if="good.status < 3 " @tap.stop="cancelOrder(item)">取消订单</view>
+				<view class="scroll-item-bottom-button normal" v-if="good.status && good.status < 3 " @tap.stop="showCancelOrder(item)">取消订单</view>
 				<view class="scroll-item-bottom-button normal" v-if="good.status > 3" @tap.stop="viewExpress(item)">查看物流</view>
 				<view class="scroll-item-bottom-button highLight" v-if="good.status === 1" @tap.stop="payOrder(item)">去支付</view>
-				<view class="scroll-item-bottom-button highLight" v-if="good.status === 5" @tap.stop="confirmOrder(item)">确认收货</view>
+				<view class="scroll-item-bottom-button highLight" v-if="good.status === 5" @tap.stop="showConfirmOrder(item)">确认收货</view>
 			</view>
 		</view>
+
+    <uniPopup ref="cancelPopup" :maskClick="false">
+			<view class="popupWrapper">
+				<view class="title">是否确认收货</view>
+				<view class="buttonBar">
+					<view class="buttonBar-cancel" @tap="$refs.popup.close()">取消</view>
+					<view class="buttonBar-confirm" @tap="confirmOrder">确认</view>
+				</view>		
+			</view>
+    </uniPopup>
+    <uniPopup ref="confirmPopup" :maskClick="false">
+			<view class="popupWrapper">
+				<view class="title">是否确认收货</view>
+				<view class="buttonBar">
+					<view class="buttonBar-cancel" @tap="$refs.popup.close()">取消</view>
+					<view class="buttonBar-confirm" @tap="confirmOrder">确认</view>
+				</view>		
+			</view>
+    </uniPopup>
 	</view>
 </template>
 
 <script>
+  import { getOrderList, cancelOrder, confirmOrder } from '@/api/user.js'
+  import uniPopup from 'components/uni-popup/uni-popup.vue'
+  
 	export default {
+    components: { uniPopup },
 		props:{
 			list: { // 数据列表
 				type: Array,
@@ -35,6 +58,7 @@
     data () {
       return {
         status: ['订单已取消', '未付款', '已付款', '已揽件', '门店签收', '门店发货', '用户签收'],
+        currentOrderInfo: {}
       }
     },
     methods: {
@@ -45,8 +69,9 @@
           uni.navigateTo({ url: `/pages/user/orderDetail?id=${good.id}` })
         }
       },
-      cancelOrder (good) {
-        uni.navigateTo({ url: `/pages/user/orderDetail?id=${good.id}` })
+      showCancelOrder (good) {
+        this.$refs.cancelPopup.open()
+        this.currentOrderInfo = good
       },
       viewExpress (good) {
         uni.navigateTo({ url: `/pages/user/expressTrack?id=${good.id}` })
@@ -54,9 +79,32 @@
       payOrder (good) {
         uni.navigateTo({ url: `/pages/wash/order?id=${good.id}` })
       },
-      confirmOrder (good) {
-        uni.navigateTo({ url: `/pages/user/orderDetail?id=${good.id}` })
-      }
+      showConfirmOrder (good) {
+        this.$refs.confirmPopup.open()
+        this.currentOrder = good
+      },
+      async cancelOrder () {
+				uni.showLoading({ title: '正在取消订单' });
+        const [error , { data }] = await cancelOrder({ id: this.currentOrderInfo.id })
+        uni.hideLoading();
+        if (error) {
+          uni.showToast({ icon: 'none', title: '订单取消失败' })
+          return
+				}
+				uni.showToast({ icon: 'none', title: '取消成功' })
+				this.currentOrderInfo.status = 0
+			},
+			async confirmOrder () {
+				uni.showLoading({ title: '正在签收' });
+        const [error , { data }] = await confirmOrder({ id: this.currentOrderInfo.id })
+        uni.hideLoading();
+        if (error) {
+          uni.showToast({ icon: 'none', title: '订单签收失败' })
+          return
+				}
+				uni.showToast({ icon: 'none', title: '收货成功' })
+				this.currentOrderInfo.status = 6
+			},
     }
 	}
 </script>

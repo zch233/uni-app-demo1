@@ -26,15 +26,15 @@
 			</view>
 		</view>
 		<view class="card secondFloor">
-			<view class="secondFloor-goodItem">
+			<view class="secondFloor-goodItem" v-for="item in orderGoodList" :key="item.id">
 				<image mode='widthFix' src="/static/img/good.png"></image>
-				<view>上衣x2</view>
-				<view class="secondFloor-goodItem-price">￥29</view>
+				<view>{{ item.title }}x{{ item.buy_number }}</view>
+				<view class="secondFloor-goodItem-price">￥{{ item.totalPrice }}</view>
 			</view>
-			<view class="secondFloor-cancelButton"><text>取消订单</text></view>
+			<view class="secondFloor-cancelButton" v-if="orderInfo.status < 3 && orderInfo.status"><text @tap="cancelOrder">取消订单</text></view>
 			<view class="secondFloor-infoItem">
 				<text>商品总价</text>
-				<text>¥199</text>
+				<text>¥{{ orderInfo.total_price }}</text>
 			</view>
 			<view class="secondFloor-infoItem">
 				<text>运费</text>
@@ -42,32 +42,94 @@
 			</view>
 			<view class="secondFloor-priceItem">
 				<text>实付款</text>
-				<view>¥199</view>
+				<view>¥{{ orderInfo.real_price }}</view>
 			</view>
 		</view>
 		<view class="card thirdFloor">
 			<view class="thirdFloor-title">订单信息</view>
-			<view class="thirdFloor-info">订单编号：123456789123</view>
-			<view class="thirdFloor-info">创建时间：2020/02/02 16:14</view>
-			<view class="thirdFloor-info">付款时间：2020/02/02 16:14</view>
-			<view class="thirdFloor-info">取货时间：2020/02/02 16:14</view>
-			<view class="thirdFloor-info">成交时间：2020/02/02 16:14</view>
+			<view class="thirdFloor-info">订单编号：{{ orderInfo.order_id }}</view>
+			<view class="thirdFloor-info">创建时间：{{ orderInfo.created_time }}</view>
+			<view class="thirdFloor-info" v-for="item in orderLog" :key="item.desc">{{ item.desc }}：{{ item.created_time }}</view>
 		</view>
 		<view class="buttonBar">
 			<view class="buttonBar-store">联系门店</view>
 			<view class="buttonBar-express">联系顺风</view>
 		</view>
-		<view class="payNow">立即支付</view>
+		<view class="payNow" v-if="orderInfo.status === 5" @tap="showConfirmOrder">立即收货</view>
+
+		<uniPopup ref="popup" :maskClick="false">
+			<view class="popupWrapper">
+				<view class="title">是否确认收货</view>
+				<view class="buttonBar">
+					<view class="buttonBar-cancel" @tap="$refs.popup.close()">取消</view>
+					<view class="buttonBar-confirm" @tap="confirmOrder">确认</view>
+				</view>		
+			</view>
+    </uniPopup>
 	</view>
 </template>
 
 <script>
+	import { getOrderList, cancelOrder, confirmOrder } from '@/api/user.js'
+	import uniPopup from 'components/uni-popup/uni-popup.vue'
+
 	export default {
+		components: { uniPopup },
 		onLoad (e) {
-			console.log(e.id, 'id')
+			this.getOrderInfo(e.id)
+		},
+		data () {
+			return {
+				orderInfo: {},
+				orderGoodList: [],
+				orderLog: [],
+				address: '',
+			}
 		},
 		methods: {
-			async getOrderDetail () {}
+			showConfirmOrder () {
+				this.$refs.popup.open()
+			},
+			async getOrderInfo (id) {
+				uni.showLoading({ title: '正在获取订单' });
+        const [error , { data }] = await getOrderList({ id })
+        uni.hideLoading();
+        if (error) {
+          uni.showToast({ icon: 'none', title: '订单获取失败' })
+          return
+				}
+				this.orderInfo = data.data.data[0]
+				this.orderGoodList = data.data.data[0].goods_detail
+				this.orderLog = data.data.data[0].order_log || []
+				this.orderGoodList.map(v => (v.totalPrice = (v.buy_number * v.price).toFixed(2) * 1))
+				this.address = data.data.data[0].address
+			},
+			async cancelOrder () {
+				uni.showLoading({ title: '正在取消订单' });
+        const [error , { data }] = await cancelOrder({ id: this.orderInfo.id })
+        uni.hideLoading();
+        if (error) {
+          uni.showToast({ icon: 'none', title: '订单取消失败' })
+          return
+				}
+				if (data.code !== 'success') {
+					uni.showToast({ icon: 'none', title: data.msg })
+					return
+				}
+				uni.showToast({ icon: 'none', title: '取消成功' })
+				this.orderInfo.status = 0
+			},
+			async confirmOrder () {
+				uni.showLoading({ title: '正在签收' });
+        const [error , { data }] = await confirmOrder({ id: this.orderInfo.id })
+        uni.hideLoading();
+        if (error) {
+          uni.showToast({ icon: 'none', title: '订单签收失败' })
+          return
+				}
+				uni.showToast({ icon: 'none', title: '收货成功' })
+				this.orderInfo.status = 6
+			},
     }
 	}
 </script>
@@ -225,6 +287,35 @@
 		border-radius: 10rpx;
 		font-size: 36rpx;
 		text-align: center;
+	}
+}
+.popupWrapper {
+	background-color: #fff;
+	border-radius: 20rpx;
+	padding: 70rpx 60rpx;
+	text-align: center;
+	width: 90%;
+	.title {
+		color: #333;
+		font-size: 36rpx;
+		margin-bottom: 99rpx;
+	}
+	.buttonBar {
+		display: flex;
+		justify-content: space-between;
+		&-cancel, &-confirm {
+			border-radius: 10rpx;
+			padding: 22rpx 72rpx;
+			border: 2rpx solid #F22061;
+		}
+		&-cancel {
+			background-color: #fff;
+			color: #F22061;
+		}
+		&-confirm {
+			background-color: #F22061;
+			color: #fff;
+		}
 	}
 }
 </style>

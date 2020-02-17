@@ -43,7 +43,7 @@
 					noMoreSize: 4, //如果列表已无数据,可设置列表的总数量要大于半页才显示无更多数据;避免列表数据过少(比如只有一条数据),显示无更多数据会不好看; 默认5
 					empty:{
 						tip: '~ 空空如也 ~', // 提示
-						btnText: '去看看'
+						btnText: '下一单'
 					}
 				},
 				goods: [], //列表数据
@@ -113,9 +113,7 @@
 			},
 			//点击空布局按钮的回调
 			emptyClick(){
-				uni.showToast({
-					title:'点击了按钮,具体逻辑自行实现'
-				})
+				uni.navigateTo({ url: '/pages/wash/wash' })
 			}
 		}
 	}

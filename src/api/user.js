@@ -23,3 +23,11 @@ export function getCouponList (data) {
 export function getUserInfo (data) {
   return request('/collect/user_info', data)
 }
+
+export function cancelOrder (data) {
+  return request('/collect/del_order', data)
+}
+
+export function confirmOrder (data) {
+  return request('/collect/receive_order', data)
+}
