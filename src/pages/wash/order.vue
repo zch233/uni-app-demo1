@@ -187,7 +187,7 @@
         //   return
         // }
 				// uni.hideLoading();
-				uni.redirectTo({ url: '/pages/wash/paySuccess' })
+				uni.redirectTo({ url: `/pages/wash/paySuccess?id=${this.orderInfo.id}` })
 			}
     }
   }
