@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { logout } from '@/api/user.js'
+import { logout, updateUserInfo } from '@/api/user.js'
 
 Vue.use(Vuex)
 
@@ -17,7 +17,6 @@ const store = new Vuex.Store({
 		userVip: false,
 		userPhone: '',
 		userInfo: {},
-		orderGoodList: [],
 	},
 	mutations: {
 		login(state, data) {
@@ -42,11 +41,18 @@ const store = new Vuex.Store({
 			state.userInfo = {}
 			state.hasLogin = false;
 		},
-		setOrderGoodList(state, data) {
-			state.orderGoodList = data
-		}
 	},
 	actions: {
+		updateUserInfo({ commit }, userInfo) {
+      return new Promise((resolve, reject) => {
+				updateUserInfo({ nickname: userInfo.nickName, avatar: userInfo.avatarUrl }).then(() => {
+					commit('updateUserInfo', userInfo)
+					resolve()
+				}).catch(error => {
+          reject(error)
+        })
+      })
+    },
 		logout({ commit }) {
       return new Promise((resolve, reject) => {
 				logout().then(() => {
@@ -55,7 +61,6 @@ const store = new Vuex.Store({
 				}).catch(error => {
           reject(error)
         })
-        
       })
     },
 	}

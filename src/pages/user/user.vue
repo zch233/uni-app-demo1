@@ -10,11 +10,11 @@
 					</view>
 					<view v-if="userPhone" class="userCard-userInfo-brief-phone">{{ userPhone }}</view>
 				</view>
-				<view v-if="!hasLogin" class="userCard-userInfo-brief" @tag="login">
+				<view v-if="!hasLogin" class="userCard-userInfo-brief">
 					<view class="userCard-userInfo-brief-name">
 						点击注册 / 登陆
 						<!-- <button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber"></button> -->
-						<button open-type="getUserInfo" @getuserinfo="getUserInfo"></button>
+						<button open-type="getUserInfo" @getuserinfo="getWxUserInfo"></button>
 					</view>
 				</view>
 				<view class="userCard-userInfo-rank" v-if="userVip">黄金</view>
@@ -86,7 +86,7 @@
 
 <script>
 	import { login, updateUserInfo, getUserInfo } from '@/api/user.js'
-	import { mapState, mapMutations } from 'vuex'
+	import { mapState } from 'vuex'
 
 	export default {
 		computed: {
@@ -99,19 +99,23 @@
 		data () {
 			return {
 				couponList: [],
-				userInfo: {}
+				userInfo: {},
+				orderInfo: {}
 			}
 		},
 		methods: {
-			...mapMutations(['updateUserInfo']),
 			getWxUserInfo () {
 				uni.showLoading({ title: '加载中' });
 				uni.getUserInfo({
 					provider: 'weixin',
 					success: async ({ userInfo }) => {
-						this.updateUserInfo(userInfo)
-						await updateUserInfo({ nickname: userInfo.nickName, avatar: userInfo.avatarUrl })
-						uni.hideLoading()
+						this.$store.dispatch('updateUserInfo', userInfo).then(() => {
+							uni.showToast({ icon: 'none', title: '登陆成功' })
+						}).catch((err) => {
+							uni.showToast({ icon: 'none', title: '更新失败' })
+						}).finally(() => {
+							uni.hideLoading();
+						})
 					},
 					fail() {
 						uni.showToast({
@@ -121,9 +125,10 @@
 					}
 				});
 			},
-			async getUserInfo () {
+			async getUserInfo (refresh) {
 				uni.showLoading({ title: '加载中' });
 				const [error, { data }] = await getUserInfo()
+				if (refresh) uni.stopPullDownRefresh()
         uni.hideLoading();
         if (error) {
           uni.showToast({ icon: 'none', title: '获取失败' })
@@ -143,7 +148,10 @@
 				} else {
 					console.log('获取成功')
 				}
-			}
+			},
+			onPullDownRefresh() {
+        this.getUserInfo('refresh')
+      },
 		}
 	}
 </script>
@@ -337,7 +345,7 @@
 			text-align: center;
 		}
 		text {
-			$r: 26rpx;
+			$r: 30rpx;
 			position: absolute;
 			right: -($r / 2);
 			top: -($r / 2);
@@ -347,8 +355,8 @@
 			line-height: $r;
 			width: $r;
 			height: $r;
-			line-height: 1;
-			font-size: 22rpx;
+			line-height: $r;
+			font-size: 20rpx;
 		}
 		image.userMenu1 {
 			width: 80rpx;
