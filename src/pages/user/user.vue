@@ -157,7 +157,11 @@
 			},
 			getCouponMore () {},
 			useUserCoupon (item) {
-				uni.navigateTo({ url: '/pages/wash/wash' })
+				if (item.type === 1) {
+					uni.navigateTo({ url: '/pages/wash/wash' })
+				} else if (item.type === 2) {
+					uni.showToast({ icon: 'none', title: '正在生成' })
+				}
 			},
 			getPhoneNumber ({ detail }) {
 				console.log(detail)
