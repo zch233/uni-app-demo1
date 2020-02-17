@@ -42,7 +42,7 @@
 				<text class="details-finall-label">小计：</text>￥<text class="details-finall-value">{{ totalPrice }}</text>
 			</view>
 		</view>
-		<textarea class="remark" v-model="remark" placeholder-style="color:#BFBFBF" placeholder="备注"/>
+		<textarea class="remark" @blur="bindTextAreaBlur" placeholder-style="color:#BFBFBF" placeholder="备注"/>
 		<view class="footer">
 			<view class="footer-price"><text>¥{{ totalPrice }}</text>已优惠¥{{ couponInfo.coupon_price || 0 }}</view>
 			<view class="footer-button" @tap="payNow">确认支付</view>
@@ -77,7 +77,8 @@
 </template>
 
 <script>
-	import { getOrderList, getCouponList, payNow } from '@/api/user.js'
+	import { getOrderList, getCouponList } from '@/api/user.js'
+	import { payNow } from '@/api/wash.js'
 	import { mapState } from 'vuex'
 	import uniPopup from 'components/uni-popup/uni-popup.vue'
 
@@ -122,9 +123,15 @@
 				this.$refs.couponPopup.open()
 				this.getCouponList()
 			},
+			bindTextAreaBlur (e) {
+				this.remark = e.detail.value
+				console.log(e.detail.value)
+				console.log(this.remark)
+			},
 			async getCouponList () {
 				uni.showLoading({ title: '加载中' });
-        const [error , { data }] = await getCouponList({ status: 1, type: 1 })
+        const [error , { data }] = await getCouponList({ status: 1, type: 1, page_size: 999 })
+        uni.hideLoading();
         if (error) {
           uni.showToast({ icon: 'none', title: '加载失败' })
           return
@@ -134,11 +141,11 @@
 					v.coupon_start_time = new Date(v.coupon_start).toLocaleDateString().replace(/\//g, ".")
 					v.coupon_end_time = new Date(v.coupon_end).toLocaleDateString().replace(/\//g, ".")
 				})
-        uni.hideLoading();
 			},
 			async getOrderInfo (id) {
 				uni.showLoading({ title: '正在获取订单' });
         const [error , { data }] = await getOrderList({ id })
+        uni.hideLoading();
         if (error) {
           uni.showToast({ icon: 'none', title: '订单获取失败' })
           return
@@ -147,7 +154,6 @@
 				this.orderGoodList = data.data.data[0].goods_detail
 				this.orderGoodList.map(v => (v.totalPrice = (v.buy_number * v.price).toFixed(2) * 1))
 				this.address = data.data.data[0].address
-        uni.hideLoading();
 			},
 			chooseAddress () {
 				const _this = this
@@ -180,13 +186,17 @@
 					uni.showToast({ icon: 'none', title: '请选择收货地址' })
 					return
 				}
-				// uni.showLoading({ title: '加载中' });
-        // const [error , { data }] = await payNow({ pay_type: 1, express: 1, address: this.address, coupon_user_id: this.couponInfo.id, nickname: this.personalInfo.name, mobile: this.personalInfo.telNumber, get_time: 1000 })
-        // if (error) {
-        //   uni.showToast({ icon: 'none', title: '加载失败' })
-        //   return
-        // }
-				// uni.hideLoading();
+				uni.showLoading({ title: '加载中' });
+        const [error , { data }] = await payNow({ id: this.orderInfo.id, pay_type: 1, express: 1, address: this.address, coupon_user_id: this.couponInfo.id, nickname: this.personalInfo.name, mobile: this.personalInfo.telNumber, get_time: 1000, remark: this.remark })
+				uni.hideLoading();
+				if (error) {
+          uni.showToast({ icon: 'none', title: '加载失败' })
+          return
+				}
+				if (data.code !== 'success') {
+					uni.showToast({ icon: 'none', title: data.data })
+					return
+				}
 				uni.redirectTo({ url: `/pages/wash/paySuccess?id=${this.orderInfo.id}` })
 			}
     }

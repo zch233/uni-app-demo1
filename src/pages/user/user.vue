@@ -124,13 +124,13 @@
 			async getUserInfo () {
 				uni.showLoading({ title: '加载中' });
 				const [error, { data }] = await getUserInfo()
+        uni.hideLoading();
         if (error) {
           uni.showToast({ icon: 'none', title: '获取失败' })
           return
         }
         this.userInfo = data.data.user_info
         this.orderInfo = data.data.order_count
-        uni.hideLoading();
 			},
 			getPhoneNumber ({ detail }) {
 				console.log(detail)

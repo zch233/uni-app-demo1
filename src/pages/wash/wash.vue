@@ -67,13 +67,13 @@
       async getGoodList (refresh) {
         uni.showLoading({ title: '正在获取商品' });
         const [error, { data }] = await getGoodList()
+        uni.hideLoading();
         if (refresh) uni.stopPullDownRefresh()
         if (error) {
           uni.showToast({ icon: 'none', title: '获取失败' })
           return
         }
         this.goodList = this.handleGoodListData(data.data.data)
-        uni.hideLoading();
       },
       handleGoodListData (data) {
         data.map(v => (v.num = 0))
@@ -98,11 +98,11 @@
         this.goodList.filter(v => v.num !== 0).map(v => (goods_info[v.id] = v.num))
         uni.showLoading({ title: '正在生成订单' });
         const [error , { data }] = await createOrder({ goods_info: JSON.stringify(goods_info) })
+        uni.hideLoading();
         if (error) {
           uni.showToast({ icon: 'none', title: '订单生成失败' })
           return
         }
-        uni.hideLoading();
         uni.navigateTo({ url: `/pages/wash/order?id=${data.data.id}` })
       }
     }
