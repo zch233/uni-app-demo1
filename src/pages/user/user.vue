@@ -44,19 +44,22 @@
 				<view class="userOrder-menu-item">
 					<image mode='widthFix' class="userMenu1" src="/static/img/userMenu1.png"></image>
 					<view>待付款</view>
-					<text>1</text>
+					<text v-if="orderInfo[1]">{{ orderInfo[1] }}</text>
 				</view>
 				<view class="userOrder-menu-item">
 					<image mode='widthFix' class="userMenu2" src="/static/img/userMenu2.png"></image>
 					<view>待取货</view>
+					<text v-if="orderInfo[1]">{{ orderInfo[2] }}</text>
 				</view>
 				<view class="userOrder-menu-item">
 					<image mode='widthFix' class="userMenu3" src="/static/img/userMenu3.png"></image>
 					<view>待收货</view>
+					<text v-if="orderInfo[1]">{{ orderInfo[5] }}</text>
 				</view>
 				<view class="userOrder-menu-item">
 					<image mode='widthFix' class="userMenu4" src="/static/img/userMenu4.png"></image>
 					<view>待评价</view>
+					<text v-if="orderInfo[1]">{{ orderInfo[6] }}</text>
 				</view>
 			</view>
 		</view>
@@ -82,7 +85,7 @@
 </template>
 
 <script>
-	import { login, updateUserInfo } from '@/api/user.js'
+	import { login, updateUserInfo, getUserInfo } from '@/api/user.js'
 	import { mapState, mapMutations } from 'vuex'
 
 	export default {
@@ -90,16 +93,18 @@
 			...mapState(['hasLogin', 'forcedLogin', 'userPhone', 'userAvater', 'userName', 'userVip'])
 		},
 		onLoad () {
+			this.getWxUserInfo()
 			this.getUserInfo()
 		},
 		data () {
 			return {
-				couponList: []
+				couponList: [],
+				userInfo: {}
 			}
 		},
 		methods: {
 			...mapMutations(['updateUserInfo']),
-			getUserInfo () {
+			getWxUserInfo () {
 				uni.showLoading({ title: '加载中' });
 				uni.getUserInfo({
 					provider: 'weixin',
@@ -115,6 +120,17 @@
 						});
 					}
 				});
+			},
+			async getUserInfo () {
+				uni.showLoading({ title: '加载中' });
+				const [error, { data }] = await getUserInfo()
+        if (error) {
+          uni.showToast({ icon: 'none', title: '获取失败' })
+          return
+        }
+        this.userInfo = data.data.user_info
+        this.orderInfo = data.data.order_count
+        uni.hideLoading();
 			},
 			getPhoneNumber ({ detail }) {
 				console.log(detail)

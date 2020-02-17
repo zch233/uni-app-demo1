@@ -95,7 +95,8 @@
 		"list": [
 			{
 				"name": "test",
-				"path": "pages/wash/wash"
+				"path": "pages/wash/order",
+				"query": "id=24"
 			}
 		]
 	},

@@ -19,7 +19,7 @@
           <view class="product-list-item-info-des">{{ item.desc }}</view>
           <view class="product-list-item-info-des">好评率：100%</view>
           <view class="product-list-item-info-priceBar">
-            <view class="product-list-item-info-priceBar-price">￥<text>{{ item.discounted_price }}</text></view>
+            <view class="product-list-item-info-priceBar-price">￥<text>{{ item.price }}</text></view>
             <view class="product-list-item-info-priceBar-countBar">
               <image mode='widthFix' @tap="calculate(item, 'minus')" v-show="item.num > 0" class="product-list-item-info-priceBar-countBar-minus" src="/static/img/minus.png"></image>
               <view class="product-list-item-info-priceBar-countBar-count" v-show="item.num > 0">{{ item.num }}</view>
@@ -56,7 +56,7 @@
         return this.goodList.map(v => v.num).reduce((a, b) => a + b, 0 )
       },
       totalPrice () {
-        return this.goodList.map(v => Number((v.num * v.discounted_price).toFixed(2))).reduce((a, b) => a + b, 0 )
+        return this.goodList.map(v => Number((v.num * v.price).toFixed(2))).reduce((a, b) => a + b, 0 )
       }
     },
     onLoad () {

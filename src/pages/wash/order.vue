@@ -2,16 +2,19 @@
 	<view class="content">
 		<view class="header">
 			<view class="header-addressBar" @tap="chooseAddress">
-				<view class="header-addressBar-address">
-					<view class="header-addressBar-address-home">极地创新中心</view>
-					<view class="header-addressBar-address-name">姓名（先生） 156xxxxxxxx</view>
+				<view class="header-addressBar-address" v-show="address">
+					<view class="header-addressBar-address-home">{{ address }}</view>
+					<view class="header-addressBar-address-name">{{ personalInfo.name }} {{ personalInfo.telNumber }}</view>
+				</view>
+				<view class="header-addressBar-address" v-show="!address">
+					<view class="header-addressBar-address-home">请选择地址</view>
 				</view>
 				<image mode='widthFix' class="right2" src="/static/img/right2.png"></image>
 			</view>
 			<view class="header-time" @tap="showTimeOption">
 				<view class="header-time-label">取货时间</view>
 				<view class="header-time-value">
-					<view>约10：:30</view>
+					<view>约{{ orderTime }}</view>
 					<image mode='widthFix' class="right2" src="/static/img/right2.png"></image>
 				</view>
 			</view>
@@ -27,23 +30,24 @@
 			<view class="details-item" v-for="good in orderGoodList" :key="good.id">
 				<image mode='widthFix' class="details-item-img" src="/static/img/good.png"></image>
 				<view class="details-item-name">{{ good.title }}</view>
-				<view class="details-item-total">x{{ good.num }}</view>
-				<view class="details-item-price">￥<text>{{ (good.num * good.discounted_price).toFixed(2) }}</text></view>
+				<view class="details-item-total">x{{ good.buy_number }}</view>
+				<view class="details-item-price">￥<text>{{ good.totalPrice }}</text></view>
 			</view>
-			<view class="details-discountBar">
+			<view class="details-discountBar" @tap="showCouponOption">
 				<view class="details-discountBar-label">红包/抵用券</view>
-				<view class="details-discountBar-value">-￥<text>69</text></view>
+				<view class="details-discountBar-value" v-show="couponInfo.id">-￥<text>{{ couponInfo.coupon_price * 1 }}</text></view>
+				<view class="details-discountBar-value" style="color: #bbb;" v-show="!couponInfo.id">请选择优惠券</view>
 			</view>
 			<view class="details-finall">
-				<text class="details-finall-label">小计：</text>￥<text class="details-finall-value">69</text>
+				<text class="details-finall-label">小计：</text>￥<text class="details-finall-value">{{ totalPrice }}</text>
 			</view>
 		</view>
-		<textarea class="remark" placeholder-style="color:#BFBFBF" placeholder="备注"/>
+		<textarea class="remark" v-model="remark" placeholder-style="color:#BFBFBF" placeholder="备注"/>
 		<view class="footer">
-			<view class="footer-price"><text>¥100</text>已优惠¥100</view>
+			<view class="footer-price"><text>¥{{ totalPrice }}</text>已优惠¥{{ couponInfo.coupon_price || 0 }}</view>
 			<view class="footer-button" @tap="payNow">确认支付</view>
 		</view>
-		<uni-popup ref="popup" class="timePopup" type="bottom">
+		<uni-popup ref="timePopup" class="timePopup" type="bottom">
 			<view class="timeTitle">选择上门时间</view>
 			<view class="timeContent">
 				<view class="timeContent-left">
@@ -54,15 +58,30 @@
 				</scroll-view>
 			</view>
     </uni-popup>
+		<uni-popup ref="couponPopup" class="timePopup" type="bottom">
+			<scroll-view scroll-y class="couponList" scroll-with-animation>
+				<view class="couponList-item blue" v-for="item in couponList" :key="item" @tap="chooseCoupon(item)">
+					<view class="couponList-item-left">
+						<view class="couponList-item-left-price">￥<text>{{ item.coupon_price }}</text></view>
+						<view class="couponList-item-left-tips">满{{ item.condition }}元可用</view>
+					</view>
+					<view class="couponList-item-middle">
+						<view class="couponList-item-middle-info">{{ item.coupon_name }}</view>
+						<view class="couponList-item-middle-time">{{ item.coupon_start_time }} ~ {{ item.coupon_end_time }}</view>
+					</view>
+					<view class="couponList-item-right">立即使用</view>
+				</view>
+			</scroll-view>
+    </uni-popup>
 	</view>
 </template>
 
 <script>
-	import { getOrderList } from '@/api/user.js'
+	import { getOrderList, getCouponList, payNow } from '@/api/user.js'
 	import { mapState } from 'vuex'
 	import uniPopup from 'components/uni-popup/uni-popup.vue'
 
-	const getTimeList = (hour = 0) => [...new Array(24).keys()].splice(hour).map(v => v < 10 ? `0${v}` : v).map(v => ['15', '30', '45'].map(vv => `${v}:${vv}`)).reduce((a, b) => a.concat(b), [])
+	const getTimeList = (hour = 0) => [...new Array(24).keys()].splice(hour).map(v => v < 10 ? `0${v}` : v).map(v => ['15', '30', '45'].map(vv =>  v === hour ? (new Date().getMinutes() > vv ? false : `${v}:${vv}`) : `${v}:${vv}`)).reduce((a, b) => a.concat(b), []).filter(Boolean)
 	const normalRightTime = getTimeList()
 	const nowRightTime = getTimeList(new Date().getHours())
 	const day = ['日', '一', '二', '三', '四', '五', '六']
@@ -70,23 +89,52 @@
 	const nowLeftTime = [`今天（周${day[nowDay]}）`, `明天（周${day[nowDay + 1]}）`, `后天（周${day[nowDay + 2]}）`]
 	export default {
 		components: { uniPopup },
+		computed: {
+			totalPrice() {
+				const price = this.orderInfo.real_price - (this.couponInfo.coupon_price || 0)
+				return price < 0 ? 0 : (price.toFixed(2) * 1)
+			}
+		},
 		data () {
 			return {
 				orderGoodList: [],
-				addressInfo: {},
+				couponList: [],
+				address: '',
+				remark: '',
+				orderInfo: {},
+				couponInfo: {},
+				personalInfo: {},
 				leftTime: nowLeftTime,
 				leftTimeIndex: 0,
 				rightTime: nowRightTime,
 				rightTimeIndex: 0,
+				orderTime: nowRightTime[0],
 			}
 		},
 		onLoad (e) {
-			console.log(e.id)
 			this.getOrderInfo(e.id)
 		},
 		methods: {
 			showTimeOption () {
-				this.$refs.popup.open()
+				this.$refs.timePopup.open()
+			},
+			showCouponOption () {
+				this.$refs.couponPopup.open()
+				this.getCouponList()
+			},
+			async getCouponList () {
+				uni.showLoading({ title: '加载中' });
+        const [error , { data }] = await getCouponList({ status: 1, type: 1 })
+        if (error) {
+          uni.showToast({ icon: 'none', title: '加载失败' })
+          return
+				}
+				this.couponList = data.data.data
+				this.couponList.map(v => {
+					v.coupon_start_time = new Date(v.coupon_start).toLocaleDateString().replace(/\//g, ".")
+					v.coupon_end_time = new Date(v.coupon_end).toLocaleDateString().replace(/\//g, ".")
+				})
+        uni.hideLoading();
 			},
 			async getOrderInfo (id) {
 				uni.showLoading({ title: '正在获取订单' });
@@ -94,34 +142,52 @@
         if (error) {
           uni.showToast({ icon: 'none', title: '订单获取失败' })
           return
-        }
+				}
+				this.orderInfo = data.data.data[0]
+				this.orderGoodList = data.data.data[0].goods_detail
+				this.orderGoodList.map(v => (v.totalPrice = (v.buy_number * v.price).toFixed(2) * 1))
+				this.address = data.data.data[0].address
         uni.hideLoading();
 			},
 			chooseAddress () {
+				const _this = this
 				uni.chooseAddress({
 					success(res) {
-						this.addressInfo = res
+						_this.personalInfo = { name: res.userName, telNumber: res.telNumber }
+						_this.address = res.provinceName + res.cityName + res.countyName + res.detailInfo
 					},
 					fail() {
 						uni.showToast({ icon: 'none', title: '获取地址失败' })
 					}
 				})
 			},
+			chooseCoupon (data) {
+				this.couponInfo = data
+				this.$refs.couponPopup.close()
+			},
 			selectLeftTime (index) {
 				this.leftTimeIndex = index
+				this.rightTime = index === 0 ? nowRightTime : normalRightTime
+				this.rightTimeIndex = 0
 			},
 			selectRightTime (index) {
 				this.rightTimeIndex = index
-				this.rightTime = index === 0 ? nowRightTime : normalRightTime
+				this.orderTime = (this.leftTimeIndex === 0 ? '' : this.leftTime[this.leftTimeIndex]) + this.rightTime[this.rightTimeIndex]
+				this.$refs.timePopup.close()
 			},
 			async payNow () {
-				uni.showLoading({ title: '加载中' });
-        const [error , { data }] = await payNow({ pay_type: 1, express: 1, address: this.addressInfo.provinceName + this.addressInfo.cityName + this.addressInfo.countyName + this.addressInfo.detailInfo })
-        if (error) {
-          uni.showToast({ icon: 'none', title: '加载失败' })
-          return
-        }
-        uni.hideLoading();
+				if (this.address === '') {
+					uni.showToast({ icon: 'none', title: '请选择收货地址' })
+					return
+				}
+				// uni.showLoading({ title: '加载中' });
+        // const [error , { data }] = await payNow({ pay_type: 1, express: 1, address: this.address, coupon_user_id: this.couponInfo.id, nickname: this.personalInfo.name, mobile: this.personalInfo.telNumber, get_time: 1000 })
+        // if (error) {
+        //   uni.showToast({ icon: 'none', title: '加载失败' })
+        //   return
+        // }
+				// uni.hideLoading();
+				uni.navigateTo({ url: '/pages/wash/paySuccess' })
 			}
     }
   }
@@ -166,6 +232,7 @@
 				font-size: 35rpx;
 				margin-bottom: 12rpx;
 				font-weight: bold;
+				word-break: break-all;
 			}
 		}
 	}
@@ -359,6 +426,67 @@
 				transform: translateY(-50%);
 			}
 		}
+	}
+}
+%flex {
+	display: flex;
+	align-items: center;
+}
+.couponList {
+	color: #333;
+	height: 100vh;
+	background-color: #fff;
+	box-sizing: border-box;
+	&-item {
+		box-shadow: 0 0 10rpx 0 rgba(0, 0, 0, .1);
+		background-repeat: repeat-y;
+		background-size: contain;
+		border-radius: 10rpx;
+		overflow: hidden;
+		width: 96%;
+		margin: 20rpx auto;
+		@extend %flex;
+		&-left {
+			color: #F22061;
+			font-size: 24rpx;
+			text-align: center;
+			padding: 12rpx 40rpx;
+			border-right: 4rpx dashed #bbb;
+			&-price {
+				font-weight: bold;
+				font-size: 30rpx;
+				margin-bottom: 18rpx;
+				text {
+					font-size: 48rpx;
+				}
+			}
+		}
+		&-middle {
+			flex: 1;
+			padding-left: 40rpx;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			font-size: 24rpx;
+			&-time {
+				color: #bbb;
+				margin-top: 24rpx;
+			}
+		}
+		&-right {
+			color: #fff;
+			width: 2em;
+			padding: 1.66em .8em;
+		}
+	}
+	&-item.blue &-item-right {
+		background-color: #309EEB;
+	}
+	&-item.red &-item-right {
+		background-color: #F22061;
+	}
+	&-item.disabled &-item-right {
+		background-color: #DBDBDB;
 	}
 }
 </style>

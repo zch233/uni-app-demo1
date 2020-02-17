@@ -15,3 +15,11 @@ export function updateUserInfo (data) {
 export function getOrderList (data) {
   return request('/collect/get_order', data)
 }
+
+export function getCouponList (data) {
+  return request('/collect/get_coupon', data)
+}
+
+export function getUserInfo (data) {
+  return request('/collect/user_info', data)
+}
