@@ -36,10 +36,10 @@
 			</view>
 		</view>
 		<view class="userOrder">
-			<view class="userOrder-title">
+			<navigator url="/pages/user/order" class="userOrder-title">
 				我的订单
 				<image mode='widthFix' src="/static/img/right.png"></image>
-			</view>
+			</navigator>
 			<view class="userOrder-menu">
 				<view class="userOrder-menu-item">
 					<image mode='widthFix' class="userMenu1" src="/static/img/userMenu1.png"></image>
@@ -355,7 +355,7 @@
 		justify-content: space-between;
 		font-weight: bold;
 		font-size: 35rpx;
-		margin-bottom: 38rpx;
+		margin-bottom: 50rpx;
 		image {
 			width: 18rpx;
 		}
