@@ -15,24 +15,23 @@
 </template>
 
 <script>
-	import { mapMutations } from 'vuex'
 	import { logout } from '@/api/user.js'
 	import uniPopup from 'components/uni-popup/uni-popup.vue'
 
 	export default {
 		components: { uniPopup },
 		methods: {
-			...mapMutations(['logout']),
 			async bindLogout () {
-				const [error, { data }] = await logout()
-				if (error) {
+				uni.showLoading({ title: '加载中' });
+				this.$store.dispatch('logout').then(() => {
+					uni.reLaunch({
+						url: '../index/index',
+					});
+				}).catch((err) => {
 					uni.showToast({ icon: 'none', title: '退出失败' })
-					return
-				}
-				this.logout();
-				uni.reLaunch({
-					url: '../index/index',
-				});
+				}).finally(() => {
+					uni.hideLoading();
+				})
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { logout } from '@/api/user.js'
 
 Vue.use(Vuex)
 
@@ -46,12 +47,17 @@ const store = new Vuex.Store({
 		}
 	},
 	actions: {
-		setdynamicrouter({ commit }, data){
-			return new Promise(resolve => {
-					commit('updateUserInfo', data)
+		logout({ commit }) {
+      return new Promise((resolve, reject) => {
+				logout().then(() => {
+					commit('logout')
 					resolve()
-			})
-		},
+				}).catch(error => {
+          reject(error)
+        })
+        
+      })
+    },
 	}
 })
 
