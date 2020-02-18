@@ -96,8 +96,8 @@
 		"list": [
 			{
 				"name": "test",
-				"path": "pages/user/user",
-				"query": "id=24"
+				"path": "pages/user/order",
+				"query": "apge=0"
 			}
 		]
 	},
