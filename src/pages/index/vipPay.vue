@@ -2,11 +2,11 @@
 	<view class="vipPayContent">
 		<view class="vipPayContent-user">
       <view class="vipPayContent-user-img">
-        <image mode='widthFix' src="/static/img/userHL.png"></image>
+        <image mode='widthFix' :src="userAvater"></image>
       </view>
       <view class="vipPayContent-user-info">
-        <view class="vipPayContent-user-infoName">唐泽</view>
-        <view class="vipPayContent-user-infoVip">普通会员</view>
+        <view class="vipPayContent-user-infoName">{{ userName }}</view>
+        <view class="vipPayContent-user-infoVip">{{ userVip ? '黄金会员' : '普通会员'}}</view>
       </view>
     </view>
     <view class="vipPayContent-payBar">
@@ -35,9 +35,13 @@
 
 <script>
   import uniPopup from 'components/uni-popup/uni-popup.vue'
+  import { mapState } from 'vuex'
 
 	export default {
     components: { uniPopup },
+    computed: {
+      ...mapState(['userAvater', 'userName', 'userVip'])
+    },
     onLoad () {
       this.$refs.popup.open()
     }
