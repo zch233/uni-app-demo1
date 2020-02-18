@@ -41,26 +41,26 @@
 				<image mode='widthFix' src="/static/img/right.png"></image>
 			</navigator>
 			<view class="userOrder-menu">
-				<view class="userOrder-menu-item">
+				<navigator url="/pages/user/order?page=1" class="userOrder-menu-item">
 					<image mode='widthFix' class="userMenu1" src="/static/img/userMenu1.png"></image>
 					<view>待付款</view>
 					<text v-if="orderInfo[1]">{{ orderInfo[1] }}</text>
-				</view>
-				<view class="userOrder-menu-item">
+				</navigator>
+				<navigator url="/pages/user/order?page=2" class="userOrder-menu-item">
 					<image mode='widthFix' class="userMenu2" src="/static/img/userMenu2.png"></image>
 					<view>待取货</view>
 					<text v-if="orderInfo[1]">{{ orderInfo[2] }}</text>
-				</view>
-				<view class="userOrder-menu-item">
+				</navigator>
+				<navigator url="/pages/user/order?page=3" class="userOrder-menu-item">
 					<image mode='widthFix' class="userMenu3" src="/static/img/userMenu3.png"></image>
 					<view>待收货</view>
 					<text v-if="orderInfo[1]">{{ orderInfo[5] }}</text>
-				</view>
-				<view class="userOrder-menu-item">
+				</navigator>
+				<navigator url="/pages/user/order?page=4" class="userOrder-menu-item">
 					<image mode='widthFix' class="userMenu4" src="/static/img/userMenu4.png"></image>
 					<view>待评价</view>
 					<text v-if="orderInfo[1]">{{ orderInfo[6] }}</text>
-				</view>
+				</navigator>
 			</view>
 		</view>
 		<view class="userCoupon">

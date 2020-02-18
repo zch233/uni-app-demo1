@@ -31,3 +31,7 @@ export function cancelOrder (data) {
 export function confirmOrder (data) {
   return request('/collect/receive_order', data)
 }
+
+export function globalInfo (data) {
+  return request('/collect/global_info', data)
+}

@@ -11,13 +11,11 @@
 			uni.login({
 				provider: 'weixin',
 				success: async ({ code }) => {
-					const [error, { data }] = await login({ js_code: code })
-					if (error) {
-						uni.showToast({ icon: 'none', title: '登陆失败' })
-						return
-					}
-					uni.setStorageSync('access_token', data.data.access_token)
-					this.login(data.data)
+					uni.showLoading({ title: '加载中' });
+					this.$store.dispatch('login', code).then(() => {
+						uni.hideLoading();
+						console.log('登陆成功')
+					})
 				},
 				fail: (err) => {
 					console.error('授权登录失败：' + JSON.stringify(err));

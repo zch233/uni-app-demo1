@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { logout, updateUserInfo } from '@/api/user.js'
+import { login, logout, updateUserInfo, globalInfo } from '@/api/user.js'
 
 Vue.use(Vuex)
 
@@ -17,6 +17,7 @@ const store = new Vuex.Store({
 		userVip: false,
 		userPhone: '',
 		userInfo: {},
+		globalInfo: [],
 	},
 	mutations: {
 		login(state, data) {
@@ -33,6 +34,9 @@ const store = new Vuex.Store({
 		updateUserIPhone(state, userPhone) {
 			state.userPhone = userPhone
 		},
+		saveGlobalInfo(state, data) {
+			state.globalInfo = data
+		},
 		logout(state) {
 			state.userName = '';
 			state.userAvater = '/static/img/userHead.png'
@@ -43,6 +47,24 @@ const store = new Vuex.Store({
 		},
 	},
 	actions: {
+		login({commit}, js_code) {
+			return new Promise(async (resolve, reject) => {
+				const [error, { data }] = await login({ js_code })
+				if (error) {
+					reject(error)
+					return
+				}
+				uni.setStorageSync('access_token', data.data.access_token)
+				commit('login', data.data)
+				const [globalError, globalData] = await globalInfo()
+				if (globalError) {
+					reject(globalError)
+					return
+				}
+				commit('saveGlobalInfo', globalData.data.data)
+				resolve()
+      })
+		},
 		updateUserInfo({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
 				updateUserInfo({ nickname: userInfo.nickName, avatar: userInfo.avatarUrl }).then(() => {

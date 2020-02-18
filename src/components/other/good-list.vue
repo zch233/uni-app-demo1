@@ -13,10 +13,10 @@
 				</view>
 			</view>
 			<view class="scroll-item-bottom" v-if="good.status !== 0">
-				<view class="scroll-item-bottom-button normal" v-if="good.status && good.status < 3 " @tap.stop="showCancelOrder(item)">取消订单</view>
-				<view class="scroll-item-bottom-button normal" v-if="good.status > 3" @tap.stop="viewExpress(item)">查看物流</view>
-				<view class="scroll-item-bottom-button highLight" v-if="good.status === 1" @tap.stop="payOrder(item)">去支付</view>
-				<view class="scroll-item-bottom-button highLight" v-if="good.status === 5" @tap.stop="showConfirmOrder(item)">确认收货</view>
+				<view class="scroll-item-bottom-button normal" v-if="good.status && good.status < 3 " @tap.stop="showCancelOrder(good)">取消订单</view>
+				<view class="scroll-item-bottom-button normal" v-if="good.status > 3" @tap.stop="viewExpress(good)">查看物流</view>
+				<view class="scroll-item-bottom-button highLight" v-if="good.status === 1" @tap.stop="payOrder(good)">去支付</view>
+				<view class="scroll-item-bottom-button highLight" v-if="good.status === 5" @tap.stop="showConfirmOrder(good)">确认收货</view>
 			</view>
 		</view>
 
@@ -24,7 +24,7 @@
 			<view class="popupWrapper">
 				<view class="title">是否确认收货</view>
 				<view class="buttonBar">
-					<view class="buttonBar-cancel" @tap="$refs.popup.close()">取消</view>
+					<view class="buttonBar-cancel" @tap="$refs.cancelPopup.close()">取消</view>
 					<view class="buttonBar-confirm" @tap="confirmOrder">确认</view>
 				</view>		
 			</view>
@@ -33,7 +33,7 @@
 			<view class="popupWrapper">
 				<view class="title">是否确认收货</view>
 				<view class="buttonBar">
-					<view class="buttonBar-cancel" @tap="$refs.popup.close()">取消</view>
+					<view class="buttonBar-cancel" @tap="$refs.confirmPopup.close()">取消</view>
 					<view class="buttonBar-confirm" @tap="confirmOrder">确认</view>
 				</view>		
 			</view>
@@ -81,7 +81,7 @@
       },
       showConfirmOrder (good) {
         this.$refs.confirmPopup.open()
-        this.currentOrder = good
+        this.currentOrderInfo = good
       },
       async cancelOrder () {
 				uni.showLoading({ title: '正在取消订单' });
@@ -90,19 +90,29 @@
         if (error) {
           uni.showToast({ icon: 'none', title: '订单取消失败' })
           return
+        }
+        if (data.code !== 'success') {
+					uni.showToast({ icon: 'none', title: data.msg })
+					return
 				}
 				uni.showToast({ icon: 'none', title: '取消成功' })
 				this.currentOrderInfo.status = 0
 			},
 			async confirmOrder () {
-				uni.showLoading({ title: '正在签收' });
+        uni.showLoading({ title: '正在签收' });
+        console.log(this.currentOrderInfo)
         const [error , { data }] = await confirmOrder({ id: this.currentOrderInfo.id })
         uni.hideLoading();
         if (error) {
           uni.showToast({ icon: 'none', title: '订单签收失败' })
           return
+        }
+        if (data.code !== 'success') {
+					uni.showToast({ icon: 'none', title: data.msg })
+					return
 				}
-				uni.showToast({ icon: 'none', title: '收货成功' })
+        uni.showToast({ icon: 'none', title: '收货成功' })
+        this.$refs.confirmPopup.close()
 				this.currentOrderInfo.status = 6
 			},
     }
@@ -192,5 +202,34 @@
       }
     }
   }
+}
+.popupWrapper {
+	background-color: #fff;
+	border-radius: 20rpx;
+	padding: 70rpx 60rpx;
+	text-align: center;
+	width: 90%;
+	.title {
+		color: #333;
+		font-size: 36rpx;
+		margin-bottom: 99rpx;
+	}
+	.buttonBar {
+		display: flex;
+		justify-content: space-between;
+		&-cancel, &-confirm {
+			border-radius: 10rpx;
+			padding: 22rpx 72rpx;
+			border: 2rpx solid #F22061;
+		}
+		&-cancel {
+			background-color: #fff;
+			color: #F22061;
+		}
+		&-confirm {
+			background-color: #F22061;
+			color: #fff;
+		}
+	}
 }
 </style>
