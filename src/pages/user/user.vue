@@ -36,7 +36,7 @@
 			</view>
 		</view>
 		<view class="userOrder">
-			<navigator url="/pages/user/order" class="userOrder-title">
+			<navigator url="/pages/user/order?page=0" class="userOrder-title">
 				我的订单
 				<image mode='widthFix' src="/static/img/right.png"></image>
 			</navigator>

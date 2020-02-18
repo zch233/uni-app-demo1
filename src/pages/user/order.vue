@@ -52,7 +52,8 @@
 				this.tabIndex = e.detail.current
 			}
 		},
-		onLoad() {
+		onLoad(e) {
+			this.tabIndex = parseInt(e.page, 10)
 			// 需要固定swiper的高度
 			this.height = uni.getSystemInfoSync().windowHeight + 'px'
 		}

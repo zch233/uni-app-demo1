@@ -20,7 +20,7 @@
 	import MescrollMixin from "@/components/mescroll-uni/mescroll-mixins.js";
 	import GoodList from "@/components/other/good-list.vue";
 	import MescrollUni from "@/components/mescroll-uni/mescroll-uni.vue"
-	import {apiSearch} from "@/api/mock.js"
+	// import {apiSearch} from "@/api/mock.js"
 	import { getOrderList } from '@/api/user.js'
 	
 	export default {
