@@ -77,7 +77,18 @@
 				<view class="userCoupon-item-right">{{ item.type === 1 ? '立即使用' : '立即扫码' }}</view>
 			</view>
 			<view class="userCoupon-more">
-				<image mode='widthFix' @tap="getCouponMore" src="/static/img/userCouponMore.png"></image>
+				<image mode='widthFix' @tap="getCouponMore" :class="{userCouponMoreImg: userCouponMore}" src="/static/img/userCouponMore.png"></image>
+			</view>
+			<view class="userCoupon-item disabled" v-for="item in disabledCouponList" :key="item">
+				<view class="userCoupon-item-left">
+					<view class="userCoupon-item-left-price">￥<text>{{ item.coupon_price }}</text></view>
+					<view class="userCoupon-item-left-tips">满{{ item.condition }}元可用</view>
+				</view>
+				<view class="userCoupon-item-middle">
+					<view class="userCoupon-item-middle-info">{{ item.coupon_name }}</view>
+					<view class="userCoupon-item-middle-time">{{ item.coupon_start_time }} ~ {{ item.coupon_end_time }}</view>
+				</view>
+				<view class="userCoupon-item-right" :class="[item.status === 3 ? 'used' : 'expired']">{{ item.type === 1 ? '立即使用' : '立即扫码' }}</view>
 			</view>
 		</view>
 		<navigator url="/pages/user/setting" class="userSetting">
@@ -98,13 +109,15 @@
 		onLoad () {
 			this.getWxUserInfo()
 			this.getUserInfo()
-			this.getUserCoupon()
+			this.getUserCoupon(2)
 		},
 		data () {
 			return {
 				couponList: [],
+				disabledCouponList: [],
 				userInfo: {},
-				orderInfo: {}
+				orderInfo: {},
+				userCouponMore: false,
 			}
 		},
 		methods: {
@@ -129,19 +142,24 @@
 					}
 				});
 			},
-			async getUserCoupon () {
+			async getUserCoupon (status) {
 				uni.showLoading({ title: '加载中' });
-				const [error, { data }] = await getCouponList({ status: 2, page_size: 999 })
+				const [error, { data }] = await getCouponList({ status, page_size: 999 })
         uni.hideLoading();
         if (error) {
           uni.showToast({ icon: 'none', title: '获取失败' })
           return
         }
-				this.couponList = data.data.data
-				this.couponList.map(v => {
+				const list = data.data.data.map(v => {
 					v.coupon_start_time = new Date(v.coupon_start).toLocaleDateString().replace(/\//g, ".")
 					v.coupon_end_time = new Date(v.coupon_end).toLocaleDateString().replace(/\//g, ".")
+					return v
 				})
+				if (status === 2) {
+					this.couponList = list
+				} else if (status === 34) {
+					this.disabledCouponList = list
+				}
 			},
 			async getUserInfo (refresh) {
 				uni.showLoading({ title: '加载中' });
@@ -155,7 +173,10 @@
         this.userInfo = data.data.user_info
         this.orderInfo = data.data.order_count
 			},
-			getCouponMore () {},
+			async getCouponMore () {
+				await this.getUserCoupon(34)
+				this.userCouponMore = true
+			},
 			useUserCoupon (item) {
 				if (item.type === 1) {
 					uni.navigateTo({ url: '/pages/wash/wash' })
@@ -407,12 +428,16 @@
 }
 .userCoupon {
 	color: #333;
-	padding: 38rpx 0;
+	padding: 38rpx 0 28rpx;
 	border-bottom: 2rpx solid #f2f2f2;
 	&-more {
 		text-align: center;
+		margin-bottom: 10rpx;
 		image {
 			width: 50rpx;
+			&.userCouponMoreImg {
+				transform: rotate(180deg);
+			}
 		}
 	}
 	&-title {
@@ -469,6 +494,27 @@
 	}
 	&-item.disabled &-item-right {
 		background-color: #DBDBDB;
+		position: relative;
+	}
+	&-item.disabled &-item-left {
+		color: #bbb;
+	}
+	&-item.disabled &-item-right.used::before, &-item.disabled &-item-right.expired::before {
+		content: '';
+		position: absolute;
+		width: 80rpx;
+		height: 80rpx;
+		background-repeat: no-repeat;
+		background-size: 100%;
+		top: 50%;
+		right: 50%;
+		transform: translate(-50%), -50%;
+	}
+	&-item.disabled &-item-right.used::before {
+		background-image: url('~@/static/img/userCouopnDisabled-used.png');
+	}
+	&-item.disabled &-item-right.expired::before {
+		background-image: url('~@/static/img/userCouponDisabled-expired.png');
 	}
 }
 .userSetting {
