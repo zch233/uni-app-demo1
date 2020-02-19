@@ -43,7 +43,6 @@
 
 <script>
   import { getGoodList, createOrder } from '@/api/wash.js';
-  import { mapMutations } from 'vuex'
 
 	export default {
     data () {
@@ -63,7 +62,6 @@
       this.getGoodList()
     },
     methods: {
-      ...mapMutations(['setOrderGoodList']),
       async getGoodList (refresh) {
         uni.showLoading({ title: '正在获取商品' });
         const [error, { data }] = await getGoodList()
@@ -73,6 +71,10 @@
           uni.showToast({ icon: 'none', title: '获取失败' })
           return
         }
+        if (data.code !== 'success') {
+					uni.showToast({ icon: 'none', title: data.msg })
+					return
+				}
         this.goodList = this.handleGoodListData(data.data.data)
       },
       handleGoodListData (data) {
@@ -94,7 +96,6 @@
       },
       async settleOrder () {
         const goods_info = {}
-        this.setOrderGoodList(this.goodList.filter(v => v.num !== 0))
         this.goodList.filter(v => v.num !== 0).map(v => (goods_info[v.id] = v.num))
         uni.showLoading({ title: '正在生成订单' });
         const [error , { data }] = await createOrder({ goods_info: JSON.stringify(goods_info) })
@@ -103,6 +104,10 @@
           uni.showToast({ icon: 'none', title: '订单生成失败' })
           return
         }
+        if (data.code !== 'success') {
+					uni.showToast({ icon: 'none', title: data.msg })
+					return
+				}
         uni.navigateTo({ url: `/pages/wash/order?id=${data.data.id}` })
       }
     }

@@ -1,10 +1,10 @@
 <template>
 	<view class="content">
 		<view class="payBg">
-			<image v-if="success" mode='widthFix' src="/static/img/paySuccess.png"></image>
+			<image v-if="success === 'true'" mode='widthFix' src="/static/img/paySuccess.png"></image>
 			<image v-else mode='widthFix' src="/static/img/payFail.png"></image>
     </view>
-    <view v-if="success" class="payStatus">付款成功</view>
+    <view v-if="success === 'true'" class="payStatus">付款成功</view>
     <view v-else class="payStatus">付款失败</view>
 		<view @tap="viewDetail" class="viewOrder">查看订单详情</view>
 	</view>
@@ -14,16 +14,17 @@
 	export default {
     onLoad (e) {
       this.orderId = e.id
+      this.success = e.success
     },
     data () {
       return {
-        success: true,
+        success: 'true',
         orderId: '',
       }
     },
     methods: {
       viewDetail () {
-        uni.redirectTo({ url: `/pages/wash/paySuccess?id=${orderId}` })
+        uni.redirectTo({ url: `/pages/user/orderDetail?id=${this.orderId}` })
       }
     }
 	}

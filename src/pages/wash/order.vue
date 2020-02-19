@@ -2,11 +2,11 @@
 	<view class="content">
 		<view class="header">
 			<view class="header-addressBar" @tap="chooseAddress">
-				<view class="header-addressBar-address" v-show="address">
-					<view class="header-addressBar-address-home">{{ address }}</view>
-					<view class="header-addressBar-address-name">{{ personalInfo.name }} {{ personalInfo.telNumber }}</view>
+				<view class="header-addressBar-address" v-show="addressInfo.address">
+					<view class="header-addressBar-address-home">{{ addressInfo.province + addressInfo.city + addressInfo.district + addressInfo.address }}</view>
+					<view class="header-addressBar-address-name">{{ addressInfo.nickname }} {{ addressInfo.mobile }}</view>
 				</view>
-				<view class="header-addressBar-address" v-show="!address">
+				<view class="header-addressBar-address" v-show="!addressInfo.address">
 					<view class="header-addressBar-address-home">请选择地址</view>
 				</view>
 				<image mode='widthFix' class="right2" src="/static/img/right2.png"></image>
@@ -94,14 +94,14 @@
 		computed: {
 			totalPrice() {
 				const price = this.orderInfo.real_price - (this.couponInfo.coupon_price || 0)
-				return price < 0 ? 0 : (price.toFixed(2) * 1)
+				return price < 0 ? 0.01 : (price.toFixed(2) * 1)
 			}
 		},
 		data () {
 			return {
 				orderGoodList: [],
 				couponList: [],
-				address: '',
+				addressInfo: {},
 				remark: '',
 				orderInfo: {},
 				couponInfo: {},
@@ -149,17 +149,31 @@
           uni.showToast({ icon: 'none', title: '订单获取失败' })
           return
 				}
-				this.orderInfo = data.data.data[0]
-				this.orderGoodList = data.data.data[0].goods_detail
+				const result = data.data.data[0]
+				this.orderInfo = result
+				this.orderGoodList = result.goods_detail
 				this.orderGoodList.map(v => (v.totalPrice = (v.buy_number * v.price).toFixed(2) * 1))
-				this.address = data.data.data[0].address
+				this.addressInfo = {
+					city: result.city,
+					district: result.district,
+					address: result.address,
+					province: result.province,
+					mobile: result.mobile,
+					nickname: result.nickname,
+				}
 			},
 			chooseAddress () {
 				const _this = this
 				uni.chooseAddress({
-					success(res) {
-						_this.personalInfo = { name: res.userName, telNumber: res.telNumber }
-						_this.address = res.provinceName + res.cityName + res.countyName + res.detailInfo
+					success(result) {
+						_this.addressInfo = {
+							city: result.cityName,
+							district: result.countyName,
+							address: result.detailInfo,
+							province: result.provinceName,
+							mobile: result.telNumber,
+							nickname: result.userName,
+						}
 					},
 					fail() {
 						uni.showToast({ icon: 'none', title: '获取地址失败' })
@@ -181,12 +195,12 @@
 				this.$refs.timePopup.close()
 			},
 			async payNow () {
-				if (this.address === '') {
+				if (!this.addressInfo.address) {
 					uni.showToast({ icon: 'none', title: '请选择收货地址' })
 					return
 				}
 				uni.showLoading({ title: '加载中' });
-        const [error , { data }] = await payNow({ id: this.orderInfo.id, pay_type: 1, express: 1, address: this.address, coupon_user_id: this.couponInfo.id, nickname: this.personalInfo.name, mobile: this.personalInfo.telNumber, get_time: 1000, remark: this.remark })
+        const [error , { data }] = await payNow({ id: this.orderInfo.id, pay_type: 1, express: 1, ...this.addressInfo, coupon_user_id: this.couponInfo.id, get_time: 1000, remark: this.remark })
 				uni.hideLoading();
 				if (error) {
           uni.showToast({ icon: 'none', title: '加载失败' })
@@ -196,7 +210,24 @@
 					uni.showToast({ icon: 'none', title: data.msg })
 					return
 				}
-				uni.redirectTo({ url: `/pages/wash/paySuccess?id=${this.orderInfo.id}` })
+				const _this = this
+				uni.requestPayment({
+						provider: 'wxpay',
+						timeStamp: data.data.jsApiParameters.timeStamp,
+						nonceStr: data.data.jsApiParameters.nonceStr,
+						package: data.data.jsApiParameters.package,
+						signType: data.data.jsApiParameters.signType,
+						paySign: data.data.jsApiParameters.paySign,
+						success: function (res) {
+							uni.redirectTo({ url: `/pages/wash/paySuccess?id=${_this.orderInfo.id}&success=true` })
+						},
+						fail: function (err) {
+							uni.redirectTo({ url: `/pages/wash/paySuccess?id=${_this.orderInfo.id}&success=false` })
+						},
+						cancel: function (err) {
+							uni.showToast({ icon: 'none', title: '已取消支付' })
+						}
+				});
 			}
     }
   }
