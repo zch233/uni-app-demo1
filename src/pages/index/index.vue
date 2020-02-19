@@ -92,7 +92,8 @@
 			}
 		},
 		computed: mapState(['forcedLogin', 'hasLogin', 'userName']),
-		onLoad() {
+		onLoad(e) {
+			console.log(e, 'e')
 			// this.init()
 		},
 		methods: {
@@ -110,15 +111,9 @@
 								/**
 								 * 如果需要强制登录，使用reLaunch方式.
 								 */
-								if (this.forcedLogin) {
-									uni.reLaunch({
-										url: '../login/login'
-									});
-								} else {
-									uni.navigateTo({
-										url: '../login/login'
-									});
-								}
+								uni.reLaunch({
+									url: '../user/user'
+								});
 							}
 						}
 					});

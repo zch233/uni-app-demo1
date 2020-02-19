@@ -32,6 +32,10 @@ export function confirmOrder (data) {
   return request('/collect/receive_order', data)
 }
 
+export function getQRCode (data) {
+  return request('/collect/get_unlimited', data)
+}
+
 export function globalInfo (data) {
   return request('/collect/global_info', data)
 }

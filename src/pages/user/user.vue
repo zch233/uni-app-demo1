@@ -49,17 +49,17 @@
 				<navigator url="/pages/user/order?page=2" class="userOrder-menu-item">
 					<image mode='widthFix' class="userMenu2" src="/static/img/userMenu2.png"></image>
 					<view>待取货</view>
-					<text v-if="orderInfo[1]">{{ orderInfo[2] }}</text>
+					<text v-if="orderInfo[2]">{{ orderInfo[2] }}</text>
 				</navigator>
 				<navigator url="/pages/user/order?page=3" class="userOrder-menu-item">
 					<image mode='widthFix' class="userMenu3" src="/static/img/userMenu3.png"></image>
 					<view>待收货</view>
-					<text v-if="orderInfo[1]">{{ orderInfo[5] }}</text>
+					<text v-if="orderInfo[5]">{{ orderInfo[5] }}</text>
 				</navigator>
 				<navigator url="/pages/user/order?page=4" class="userOrder-menu-item">
 					<image mode='widthFix' class="userMenu4" src="/static/img/userMenu4.png"></image>
 					<view>待评价</view>
-					<text v-if="orderInfo[1]">{{ orderInfo[6] }}</text>
+					<text v-if="orderInfo[6]">{{ orderInfo[6] }}</text>
 				</navigator>
 			</view>
 		</view>

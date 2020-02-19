@@ -117,6 +117,11 @@
 			this.getOrderInfo(e.id)
 		},
 		methods: {
+			getToday () {
+				const date = new Date()
+				const today = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate() + this.leftTimeIndex) + ' ' + this.rightTime[this.rightTimeIndex]
+				return new Date(today).getTime()
+			},
 			showTimeOption () {
 				this.$refs.timePopup.open()
 			},
@@ -200,7 +205,7 @@
 					return
 				}
 				uni.showLoading({ title: '加载中' });
-        const [error , { data }] = await payNow({ id: this.orderInfo.id, pay_type: 1, express: 1, ...this.addressInfo, coupon_user_id: this.couponInfo.id, get_time: 1000, remark: this.remark })
+        const [error , { data }] = await payNow({ id: this.orderInfo.id, pay_type: 1, express: 1, ...this.addressInfo, coupon_user_id: this.couponInfo.id, get_time: this.today(), remark: this.remark })
 				uni.hideLoading();
 				if (error) {
           uni.showToast({ icon: 'none', title: '加载失败' })
