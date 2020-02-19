@@ -1,6 +1,6 @@
 <template>
 	<view class="content">
-		<view class="card firstFloor">
+		<view class="card firstFloor" v-if="false">
 			<view class="packageBar">
 				<image mode='widthFix' src="/static/img/orderDetail-package.png"></image>
 				<view>
@@ -56,6 +56,7 @@
 			<view class="buttonBar-express">联系顺风</view>
 		</view>
 		<view class="payNow" v-if="orderInfo.status === 5" @tap="showConfirmOrder">立即收货</view>
+		<navigator class="payNow" :url="`/pages/wash/order?id=${orderInfo.id}`" v-if="orderInfo.status === 1">立即支付</navigator>
 
 		<uniPopup ref="popup" :maskClick="false">
 			<view class="popupWrapper">
@@ -133,6 +134,7 @@
 	padding: 0 4%;
 	color: #333;
 	padding-bottom: 100rpx;
+	box-sizing: border-box;
 	.card {
 		border-radius: 20rpx;
 		background-color: #fff;
