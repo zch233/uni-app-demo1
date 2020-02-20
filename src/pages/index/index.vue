@@ -94,7 +94,7 @@
 		computed: mapState(['forcedLogin', 'hasLogin', 'userName']),
 		onLoad(e) {
 			console.log(e, 'e')
-			this.init()
+			// this.init()
 		},
 		methods: {
 			init () {

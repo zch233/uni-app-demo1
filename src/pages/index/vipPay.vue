@@ -28,7 +28,7 @@
       <view class="vipPayContent-bottomBar-button" @tap="payVip">确认支付</view>
     </view>
     <uniPopup ref="popup" :maskClick="false">
-     <image @click="$refs.popup.close()" mode='widthFix' src="/static/img/payVipSuccess.png"></image>
+     <image @tap="confirmPay" mode='widthFix' src="/static/img/payVipSuccess.png"></image>
     </uniPopup>
 	</view>
 </template>
@@ -44,6 +44,10 @@
       ...mapState(['userAvater', 'userName', 'userVip'])
     },
     methods: {
+      confirmPay () {
+        this.$refs.popup.close()
+        uni.switchTab({ url: '/pages/index/index' })
+      },
       async payVip () {
         uni.showLoading({ title: '正在支付' });
         const [error , { data }] = await payVip()
@@ -65,7 +69,8 @@
 					signType: data.data.jsApiParameters.signType,
 					paySign: data.data.jsApiParameters.paySign,
 					success: function (res) {
-						_this.$refs.popup.open()
+            _this.$refs.popup.open()
+            this.$store.dispatch('upgradeVip')
 					},
 					fail: function (err) {
 						uni.showToast({ icon: 'none', title: '支付失败' })

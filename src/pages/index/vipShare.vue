@@ -76,15 +76,25 @@
 				this.qrcode = data.data.img
 			},
 			saveQRCode () {
-				uni.saveImageToPhotosAlbum({
-					filePath: this.qrcode,
-					success: function () {
-						uni.showToast({ icon: 'none', title: '保存成功' })
-					},
-					fail: function () {
-						uni.showToast({ icon: 'none', title: '保存失败！' })
-					},
-				});
+				const aa = wx.getFileSystemManager();
+				aa.writeFile({
+					filePath: `${wx.env.USER_DATA_PATH}/qrcode.png`,
+					data: this.qrcode.slice(22),
+					encoding: 'base64',
+					success: res => {
+						uni.saveImageToPhotosAlbum({
+							filePath: `${wx.env.USER_DATA_PATH}/qrcode.png`,
+							success: function (res) {
+								uni.showToast({ title: '保存成功'})
+							},
+							fail: function (err) {
+								uni.showToast({ icon: 'none', title: '保存失败' })
+							}
+						})
+					}, fail: err => {
+						console.log(err)
+					}
+			 })
 			}
 		},
 	}

@@ -45,8 +45,17 @@ const store = new Vuex.Store({
 			state.userInfo = {}
 			state.hasLogin = false;
 		},
+		upgradeVip (state) {
+			state.userVip = true;
+		}
 	},
 	actions: {
+		upgradeVip({ commit }) {
+			return new Promise(async (resolve, reject) => {
+				commit('upgradeVip')
+				resolve()
+      })
+		},
 		login({commit}, js_code) {
 			return new Promise(async (resolve, reject) => {
 				const [error, { data }] = await login({ js_code })
