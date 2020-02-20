@@ -79,11 +79,13 @@
 			<navigator class="vipContent-shareBar-button" url="/pages/index/vipShare">面对面分享</navigator>
 		</view>
 		<navigator url="/pages/index/vipPay" class="vipContent-buyButton">￥<text>998/</text>年 购买会员权益</navigator>
+		<canvas canvas-id="shareCanvas" style="position:absolute;width:750px;height:1798px;z-index:-1;top:0;left:0;transform:scale(0.1);"></canvas>
 	</view>
 </template>
 
 <script>
 	import { mapState } from 'vuex'
+	import { getQRCode } from '@/api/user'
 
 	export default {
 		data () {
@@ -93,7 +95,7 @@
 		},
 		computed: mapState(['forcedLogin', 'hasLogin', 'userName']),
 		onLoad(e) {
-			console.log(e, 'e')
+			console.log(e, 'e.invite_uid')
 			// this.init()
 		},
 		methods: {
@@ -116,16 +118,45 @@
 					});
 				}
 			},
-			save () {
-				uni.saveImageToPhotosAlbum({
-					filePath: '/static/img/poster.png',
-					success: function () {
-						uni.showToast({ icon: 'none', title: '保存成功' })
-					},
-					fail: function () {
-						uni.showToast({ icon: 'none', title: '保存失败！' })
-					},
-				});
+			async getQRCode () {
+        uni.showLoading({ title: '正在生成分享' });
+        const [error , { data }] = await getQRCode()
+        uni.hideLoading();
+        if (error) {
+          uni.showToast({ icon: 'none', title: '分享生成失败' })
+          return
+        }
+        if (data.code !== 'success') {
+					uni.showToast({ icon: 'none', title: data.msg })
+					return
+				}
+				return data.data.img
+			},
+			async save () {
+				const img = await this.getQRCode({ type: 2 })
+				const ctx = wx.createCanvasContext('shareCanvas');
+				ctx.drawImage('/static/img/poster.png', 0, 0, 750, 1798);
+				ctx.drawImage(img, 154, 1592, 147, 147);
+				ctx.draw(true, function () {
+					uni.canvasToTempFilePath({
+						x: 0,
+						y: 0,
+						width: 750,
+						height: 1798,
+						canvasId: 'shareCanvas',
+						success: function (res) {
+							uni.saveImageToPhotosAlbum({
+								filePath: res.tempFilePath,
+								success: (res) => {
+									uni.showToast({ title: '保存成功' })
+								},
+								fail: (err) => {
+									uni.showToast({ icon: 'none', title: '保存失败' })
+								}
+							})
+						}
+					})
+				})
 			}
 		},
 	}

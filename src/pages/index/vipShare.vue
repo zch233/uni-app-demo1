@@ -63,7 +63,7 @@
 			},
 			async getQRCode () {
         uni.showLoading({ title: '正在生成分享' });
-        const [error , { data }] = await getQRCode()
+        const [error , { data }] = await getQRCode({ type: 1 })
         uni.hideLoading();
         if (error) {
           uni.showToast({ icon: 'none', title: '分享生成失败' })
