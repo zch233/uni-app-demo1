@@ -2,7 +2,6 @@
 	<view class="content">
 		<image mode='widthFix' class="vipCodeBg" src="/static/img/vipShareCodeBg.png"></image>
 		<image mode='widthFix' class="qrcode" :src="qrcode"></image>
-		<image mode='widthFix' class="qrcode" src="https://img-cdn-qiniu.dcloud.net.cn/uniapp/doc/github.svg"></image>
     <button class="saveButton">保存到本地</button>
     <uniPopup ref="popup" :maskClick="false">
 			<view class="content-couponWrapper">
@@ -34,7 +33,7 @@
     components: { uniPopup },
 		data () {
 			return {
-				qrcode: '',
+				qrcode: '/static/img/qrcode.png',
 			}
 		},
     onLoad() {
@@ -56,18 +55,18 @@
 				});
 			},
 			async getQRCode () {
-        uni.showLoading({ title: '正在生成订单' });
+        uni.showLoading({ title: '正在生成分享' });
         const [error , { data }] = await getQRCode()
         uni.hideLoading();
         if (error) {
-          uni.showToast({ icon: 'none', title: '订单生成失败' })
+          uni.showToast({ icon: 'none', title: '分享生成失败' })
           return
         }
         if (data.code !== 'success') {
 					uni.showToast({ icon: 'none', title: data.msg })
 					return
 				}
-				this.qrcode = data.data.img
+				// this.qrcode = 'https://wx.mangguovvip.com' + data.data.img
 				// this.handleNetImg('https://wx.mangguovvip.com/uploads/1582109098.jpg').then(res => {
 				// 	console.log(res)
 				// 	this.qrcode = res.path
@@ -94,9 +93,9 @@
     transform: translateX(-50%);
   }
 	.qrcode {
-		width: 300rpx;
+		width: 292rpx;
 		position: absolute;
-    top: 359rpx;
+    top: 358rpx;
     left: 50%;
 		border-radius: 50%;
     transform: translateX(-50%);
