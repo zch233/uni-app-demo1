@@ -2,20 +2,20 @@
 	<view class="content">
 		<image mode='widthFix' class="vipCodeBg" src="/static/img/vipShareCodeBg.png"></image>
 		<image mode='widthFix' class="qrcode" :src="qrcode"></image>
-    <button class="saveButton">保存到本地</button>
+    <button class="saveButton" @tap="saveQRCode">保存到本地</button>
     <uniPopup ref="popup" :maskClick="false">
 			<view class="content-couponWrapper">
 				<view class="content-couponTitle">升级会员好礼！</view>
 				<scroll-view class="content-couponList" scroll-y scroll-with-animation style="height: 100%;width: 100%;">
-          <view class="content-couponList-item">
+          <view class="content-couponList-item" v-for="item in couponList" :key="item.id">
             <view class="content-couponList-item-left">
-              <view class="content-couponList-item-left-price">￥<text>50</text></view>
+              <view class="content-couponList-item-left-price">￥<text>{{ item.coupon_price }}</text></view>
               <view class="content-couponList-item-left-tips">全场通用</view>
             </view>
             <view class="content-couponList-item-right">
-              <view class="content-couponList-item-right-title">优惠券</view>
-              <view class="content-couponList-item-right-tips">满1元使用</view>
-              <view class="content-couponList-item-right-time">2018/09/01-2018/09/02</view>
+              <view class="content-couponList-item-right-title">{{ item.coupon_name }}</view>
+              <view class="content-couponList-item-right-tips">满{{ item.condition }}元使用</view>
+              <view class="content-couponList-item-right-time">{{ item.coupon_start_time }}-{{ item.coupon_end_time }}</view>
             </view>
           </view>
         </scroll-view>
@@ -27,32 +27,39 @@
 
 <script>
   import uniPopup from 'components/uni-popup/uni-popup.vue'
-  import { getQRCode } from '@/api/user'
+  import { getQRCode, getCouponList } from '@/api/user'
 
 	export default {
     components: { uniPopup },
 		data () {
 			return {
 				qrcode: '/static/img/qrcode.png',
+				couponList: []
 			}
 		},
     onLoad() {
-			// this.$refs.popup.open()
 			this.getQRCode()
+			this.getShareCoupon()
 		},
 		methods: {
-			handleNetImg (imagePath) {
-				return new Promise((resolve, reject) => {
-					uni.getImageInfo({
-						src: imagePath,
-						success: function (res) {
-							resolve(res)
-						},
-						fail: function (err) {
-							reject(err)
-						}
-					});
-				});
+			async getShareCoupon () {
+        const [error , { data }] = await getCouponList({ status: 1, page_size: 999 })
+        if (error) {
+          uni.showToast({ icon: 'none', title: '获取优惠券失败' })
+          return
+        }
+        if (data.code !== 'success') {
+					uni.showToast({ icon: 'none', title: data.msg })
+					return
+				}
+				this.couponList = data.data.data.map(v => {
+					v.coupon_start_time = new Date(v.coupon_start).toLocaleDateString().replace(/\//g, ".")
+					v.coupon_end_time = new Date(v.coupon_end).toLocaleDateString().replace(/\//g, ".")
+					return v
+				})
+				if (this.couponList.length > 0) {
+					this.$refs.popup.open()
+				}
 			},
 			async getQRCode () {
         uni.showLoading({ title: '正在生成分享' });
@@ -66,13 +73,18 @@
 					uni.showToast({ icon: 'none', title: data.msg })
 					return
 				}
-				// this.qrcode = 'https://wx.mangguovvip.com' + data.data.img
-				// this.handleNetImg('https://wx.mangguovvip.com/uploads/1582109098.jpg').then(res => {
-				// 	console.log(res)
-				// 	this.qrcode = res.path
-				// }).catch(err => {
-				// 	uni.showToast({ icon: 'none', title: err })
-				// })
+				this.qrcode = data.data.img
+			},
+			saveQRCode () {
+				uni.saveImageToPhotosAlbum({
+					filePath: this.qrcode,
+					success: function () {
+						uni.showToast({ icon: 'none', title: '保存成功' })
+					},
+					fail: function () {
+						uni.showToast({ icon: 'none', title: '保存失败！' })
+					},
+				});
 			}
 		},
 	}

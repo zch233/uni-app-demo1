@@ -123,12 +123,12 @@
 				uni.saveImageToPhotosAlbum({
 					filePath: '/static/img/poster.png',
 					success: function () {
-						uni.showToast('保存成功，请至相册查看！')
+						uni.showToast({ icon: 'none', title: '保存成功' })
 					},
 					fail: function () {
-						uni.showToast('保存失败！')
+						uni.showToast({ icon: 'none', title: '保存失败！' })
 					},
-			});
+				});
 			}
 		},
 	}
