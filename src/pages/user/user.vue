@@ -23,14 +23,14 @@
 			<view class="userCard-progressBar" v-if="userVip">
 				<view class="userCard-progressBar-progress">
 					<view class="userCard-progressBar-progress-bg"></view>
-					<view class="userCard-progressBar-progress-main">
-						<view class="userCard-progressBar-progress-main-leftDay">剩余XXX天</view>
+					<view class="userCard-progressBar-progress-main" :style="{ width: `${1 - twoDateDays / 365}%` }">
+						<view class="userCard-progressBar-progress-main-leftDay">剩余{{ twoDateDays }}天</view>
 					</view>
 				</view>
-				<view class="userCard-progressBar-time">2020-02-02 到期</view>
+				<view class="userCard-progressBar-time">{{ new Date(userInfo.member_time * 1000).toLocaleDateString().replace(/\//g, ".") }} 到期</view>
 			</view>
 			<view class="userCard-numberBar">
-				<view class="userCard-numberBar-number" v-if="userVip">NO.00000 0000 0000</view>
+				<view class="userCard-numberBar-number" v-if="userVip">NO.{{ userInfo.uid }}</view>
 				<navigator url="/pages/index/vipPay" class="userCard-numberBar-button" :class="{ noUserVip: !userVip }" v-if="!userVip">立即开通会员</navigator>
 				<navigator url="/pages/index/vipPay" class="userCard-numberBar-button" v-if="userVip">立即续费</navigator>
 			</view>
@@ -104,7 +104,10 @@
 
 	export default {
 		computed: {
-			...mapState(['hasLogin', 'forcedLogin', 'userPhone', 'userAvater', 'userName', 'userVip'])
+			...mapState(['hasLogin', 'forcedLogin', 'userPhone', 'userAvater', 'userName', 'userVip']),
+			twoDateDays () {
+				return this.getDays(new Date(this.userInfo.member_time * 1000).toLocaleDateString().replace(/\//g, "-"), new Date().toLocaleDateString().replace(/\//g, "-"))
+			}
 		},
 		onLoad () {
 			this.getWxUserInfo()
@@ -121,6 +124,19 @@
 			}
 		},
 		methods: {
+			getDays(date1 , date2){
+				let date1Str = date1.split("-");//将日期字符串分隔为数组,数组元素分别为年.月.日
+				//根据年 . 月 . 日的值创建Date对象
+				let date1Obj = new Date(date1Str[0],(date1Str[1]-1),date1Str[2]);
+				let date2Str = date2.split("-");
+				let date2Obj = new Date(date2Str[0],(date2Str[1]-1),date2Str[2]);
+				let t1 = date1Obj.getTime();
+				let t2 = date2Obj.getTime();
+				let dateTime = 1000*60*60*24; //每一天的毫秒数
+				let minusDays = Math.floor(((t2-t1)/dateTime));//计算出两个日期的天数差
+				let days = Math.abs(minusDays);//取绝对值
+				return days;
+			},
 			getWxUserInfo () {
 				uni.showLoading({ title: '加载中' });
 				uni.getUserInfo({
@@ -151,8 +167,8 @@
           return
         }
 				const list = data.data.data.map(v => {
-					v.coupon_start_time = new Date(v.coupon_start).toLocaleDateString().replace(/\//g, ".")
-					v.coupon_end_time = new Date(v.coupon_end).toLocaleDateString().replace(/\//g, ".")
+					v.coupon_start_time = new Date(v.coupon_start * 1000).toLocaleDateString().replace(/\//g, ".")
+					v.coupon_end_time = new Date(v.coupon_end * 1000).toLocaleDateString().replace(/\//g, ".")
 					return v
 				})
 				if (status === 2) {
@@ -316,7 +332,7 @@
 			&-main {
 				position: relative;
 				background-image: linear-gradient(to bottom, #fff 0%, #fff 50%, transparent 50%, transparent 100%);
-				width: 30%;
+				width: 100%;
 				height: 26rpx;
 				left: 30rpx;
 				border-right: 2rpx solid #fff;

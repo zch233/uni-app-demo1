@@ -53,8 +53,8 @@
 					return
 				}
 				this.couponList = data.data.data.map(v => {
-					v.coupon_start_time = new Date(v.coupon_start).toLocaleDateString().replace(/\//g, ".")
-					v.coupon_end_time = new Date(v.coupon_end).toLocaleDateString().replace(/\//g, ".")
+					v.coupon_start_time = new Date(v.coupon_start * 1000).toLocaleDateString().replace(/\//g, ".")
+					v.coupon_end_time = new Date(v.coupon_end * 1000).toLocaleDateString().replace(/\//g, ".")
 					return v
 				})
 				if (this.couponList.length > 0) {
