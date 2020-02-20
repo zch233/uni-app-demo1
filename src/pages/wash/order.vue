@@ -217,21 +217,21 @@
 				}
 				const _this = this
 				uni.requestPayment({
-						provider: 'wxpay',
-						timeStamp: data.data.jsApiParameters.timeStamp,
-						nonceStr: data.data.jsApiParameters.nonceStr,
-						package: data.data.jsApiParameters.package,
-						signType: data.data.jsApiParameters.signType,
-						paySign: data.data.jsApiParameters.paySign,
-						success: function (res) {
-							uni.redirectTo({ url: `/pages/wash/paySuccess?id=${_this.orderInfo.id}&success=true` })
-						},
-						fail: function (err) {
-							uni.redirectTo({ url: `/pages/wash/paySuccess?id=${_this.orderInfo.id}&success=false` })
-						},
-						cancel: function (err) {
-							uni.showToast({ icon: 'none', title: '已取消支付' })
-						}
+					provider: 'wxpay',
+					timeStamp: data.data.jsApiParameters.timeStamp,
+					nonceStr: data.data.jsApiParameters.nonceStr,
+					package: data.data.jsApiParameters.package,
+					signType: data.data.jsApiParameters.signType,
+					paySign: data.data.jsApiParameters.paySign,
+					success: function (res) {
+						uni.redirectTo({ url: `/pages/wash/paySuccess?id=${_this.orderInfo.id}&success=true` })
+					},
+					fail: function (err) {
+						uni.redirectTo({ url: `/pages/wash/paySuccess?id=${_this.orderInfo.id}&success=false` })
+					},
+					cancel: function (err) {
+						uni.showToast({ icon: 'none', title: '已取消支付' })
+					}
 				});
 			}
     }

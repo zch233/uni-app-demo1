@@ -94,7 +94,7 @@
 		computed: mapState(['forcedLogin', 'hasLogin', 'userName']),
 		onLoad(e) {
 			console.log(e, 'e')
-			// this.init()
+			this.init()
 		},
 		methods: {
 			init () {
@@ -108,9 +108,6 @@
 						showCancel: !this.forcedLogin,
 						success: (res) => {
 							if (res.confirm) {
-								/**
-								 * 如果需要强制登录，使用reLaunch方式.
-								 */
 								uni.reLaunch({
 									url: '../user/user'
 								});

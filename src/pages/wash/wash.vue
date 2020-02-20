@@ -43,6 +43,7 @@
 
 <script>
   import { getGoodList, createOrder } from '@/api/wash.js';
+  import { mapState } from 'vuex'
 
 	export default {
     data () {
@@ -51,6 +52,7 @@
       }
     },
     computed: {
+      ...mapState(['forcedLogin', 'hasLogin']),
       totalCount () {
         return this.goodList.map(v => v.num).reduce((a, b) => a + b, 0 )
       },
@@ -59,9 +61,29 @@
       }
     },
     onLoad () {
+      this.init()
       this.getGoodList()
     },
     methods: {
+      init () {
+				if (!this.hasLogin) {
+					uni.showModal({
+						title: '未登录',
+						content: '您未登录，需要登录后才能继续',
+						/**
+						 * 如果需要强制登录，不显示取消按钮.
+						 */
+						showCancel: !this.forcedLogin,
+						success: (res) => {
+							if (res.confirm) {
+								uni.reLaunch({
+									url: '../user/user'
+								});
+							}
+						}
+					});
+				}
+			},
       async getGoodList (refresh) {
         uni.showLoading({ title: '正在获取商品' });
         const [error, { data }] = await getGoodList()
