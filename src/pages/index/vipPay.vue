@@ -25,7 +25,7 @@
     </view>
     <view class="vipPayContent-bottomBar">
       <view class="vipPayContent-bottomBar-price">总价<text>￥998</text></view>
-      <view class="vipPayContent-bottomBar-button">确认支付</view>
+      <view class="vipPayContent-bottomBar-button" @tap="payVip">确认支付</view>
     </view>
     <uniPopup ref="popup" :maskClick="false">
      <image @click="$refs.popup.close()" mode='widthFix' src="/static/img/payVipSuccess.png"></image>
@@ -36,14 +36,42 @@
 <script>
   import uniPopup from 'components/uni-popup/uni-popup.vue'
   import { mapState } from 'vuex'
+  import { payVip } from '@/api/user'
 
 	export default {
     components: { uniPopup },
     computed: {
       ...mapState(['userAvater', 'userName', 'userVip'])
     },
-    onLoad () {
-      this.$refs.popup.open()
+    methods: {
+      async payVip () {
+        uni.showLoading({ title: '正在支付' });
+        const [error , { data }] = await payVip()
+        uni.hideLoading();
+        if (error) {
+          uni.showToast({ icon: 'none', title: '获取参数失败' })
+          return
+        }
+        if (data.code !== 'success') {
+					uni.showToast({ icon: 'none', title: data.msg })
+					return
+				}
+				const _this = this
+				uni.requestPayment({
+					provider: 'wxpay',
+					timeStamp: data.data.jsApiParameters.timeStamp,
+					nonceStr: data.data.jsApiParameters.nonceStr,
+					package: data.data.jsApiParameters.package,
+					signType: data.data.jsApiParameters.signType,
+					paySign: data.data.jsApiParameters.paySign,
+					success: function (res) {
+						_this.$refs.popup.open()
+					},
+					fail: function (err) {
+						uni.showToast({ icon: 'none', title: '支付失败' })
+					}
+				});
+      }
     }
 	}
 </script>

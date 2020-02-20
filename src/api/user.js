@@ -39,3 +39,7 @@ export function getQRCode (data) {
 export function globalInfo (data) {
   return request('/collect/global_info', data)
 }
+
+export function payVip (data) {
+  return request('/collect/develop_pay', data)
+}
