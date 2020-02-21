@@ -70,7 +70,7 @@
 					paySign: data.data.jsApiParameters.paySign,
 					success: function (res) {
             _this.$refs.popup.open()
-            this.$store.dispatch('upgradeVip')
+            _this.$store.dispatch('upgradeVip')
 					},
 					fail: function (err) {
 						uni.showToast({ icon: 'none', title: '支付失败' })

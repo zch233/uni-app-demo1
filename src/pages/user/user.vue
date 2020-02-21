@@ -1,7 +1,7 @@
 <template>
 	<view class="content">
 		<view class="userCard" :class="{ vvip: userVip }">
-			<view class="userCard-userInfo">
+			<navigator url="/pages/user/profile" class="userCard-userInfo">
 				<image mode='widthFix' class="userCard-userInfo-img" :src="userAvater"></image>
 				<view v-if="hasLogin" class="userCard-userInfo-brief">
 					<view class="userCard-userInfo-brief-name">
@@ -13,13 +13,12 @@
 				<view v-if="!hasLogin" class="userCard-userInfo-brief">
 					<view class="userCard-userInfo-brief-name">
 						点击注册 / 登陆
-						<!-- <button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber"></button> -->
 						<button open-type="getUserInfo" @getuserinfo="getWxUserInfo"></button>
 					</view>
 				</view>
-				<view class="userCard-userInfo-rank" v-if="userVip">黄金</view>
+				<view class="userCard-userInfo-rank" v-if="userVip">黄金会员</view>
 				<view class="userCard-userInfo-rank" v-if="!userVip">普通会员</view>
-			</view>
+			</navigator>
 			<view class="userCard-progressBar" v-if="userVip">
 				<view class="userCard-progressBar-progress">
 					<view class="userCard-progressBar-progress-bg"></view>
@@ -27,10 +26,10 @@
 						<view class="userCard-progressBar-progress-main-leftDay">剩余{{ twoDateDays }}天</view>
 					</view>
 				</view>
-				<view class="userCard-progressBar-time">{{ new Date(userInfo.member_time * 1000).toLocaleDateString().replace(/\//g, ".") }} 到期</view>
+				<view class="userCard-progressBar-time">{{ new Date(userVipInfo.member_time * 1000).toLocaleDateString().replace(/\//g, ".") }} 到期</view>
 			</view>
 			<view class="userCard-numberBar">
-				<view class="userCard-numberBar-number" v-if="userVip">NO.{{ userInfo.uid }}</view>
+				<view class="userCard-numberBar-number" v-if="userVip">NO.{{ userVipInfo.uid }}</view>
 				<navigator url="/pages/index/vipPay" class="userCard-numberBar-button" :class="{ noUserVip: !userVip }" v-if="!userVip">立即开通会员</navigator>
 				<navigator url="/pages/index/vipPay" class="userCard-numberBar-button" v-if="userVip">立即续费</navigator>
 			</view>
@@ -65,7 +64,7 @@
 		</view>
 		<view class="userCoupon">
 			<view class="userCoupon-title">我的卡券</view>
-			<view class="userCoupon-item" :class="[item.type === 1 ? 'blue' : 'red']" v-for="item in couponList" :key="item" @tap="useUserCoupon(item)">
+			<view class="userCoupon-item" :class="[item.type === 1 ? 'blue' : 'red']" v-for="item in couponList" :key="item.id" @tap="useUserCoupon(item)">
 				<view class="userCoupon-item-left">
 					<view class="userCoupon-item-left-price">￥<text>{{ item.coupon_price }}</text></view>
 					<view class="userCoupon-item-left-tips">满{{ item.condition }}元可用</view>
@@ -100,11 +99,11 @@
 
 <script>
 	import { login, updateUserInfo, getUserInfo, getCouponList } from '@/api/user.js'
-	import { mapState } from 'vuex'
+	import { mapState, mapMutations } from 'vuex'
 
 	export default {
 		computed: {
-			...mapState(['hasLogin', 'forcedLogin', 'userPhone', 'userAvater', 'userName', 'userVip']),
+			...mapState(['hasLogin', 'forcedLogin', 'userPhone', 'userAvater', 'userName', 'userVip', 'userVipInfo']),
 			twoDateDays () {
 				return this.getDays(new Date(this.userInfo.member_time * 1000).toLocaleDateString().replace(/\//g, "-"), new Date().toLocaleDateString().replace(/\//g, "-"))
 			}
@@ -124,6 +123,7 @@
 			}
 		},
 		methods: {
+			...mapMutations(['updateUserVipInfo']),
 			getDays(date1 , date2){
 				let date1Str = date1.split("-");//将日期字符串分隔为数组,数组元素分别为年.月.日
 				//根据年 . 月 . 日的值创建Date对象
@@ -185,8 +185,9 @@
         if (error) {
           uni.showToast({ icon: 'none', title: '获取失败' })
           return
-        }
-        this.userInfo = data.data.user_info
+				}
+				this.userInfo = data.data.user_info
+				this.updateUserVipInfo(data.data.user_info)
         this.orderInfo = data.data.order_count
 			},
 			async getCouponMore () {
@@ -198,18 +199,6 @@
 					uni.navigateTo({ url: '/pages/wash/wash' })
 				} else if (item.type === 2) {
 					uni.showToast({ icon: 'none', title: '正在生成' })
-				}
-			},
-			getPhoneNumber ({ detail }) {
-				console.log(detail)
-				if (detail.errMsg === 'getPhoneNumber:fail user deny'){
-					uni.showModal({
-							title: '提示',
-							showCancel: false,
-							content: '未授权',
-					})
-				} else {
-					console.log('获取成功')
 				}
 			},
 			onPullDownRefresh() {

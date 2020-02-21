@@ -17,6 +17,7 @@ const store = new Vuex.Store({
 		userVip: false,
 		userPhone: '',
 		userInfo: {},
+		userVipInfo: {},
 		globalInfo: [],
 	},
 	mutations: {
@@ -30,6 +31,9 @@ const store = new Vuex.Store({
 			state.userAvater = userInfo.avatarUrl
 			state.userInfo = userInfo
 			state.hasLogin = true;
+		},
+		updateUserVipInfo(state, userVipInfo) {
+			state.userVipInfo = userVipInfo
 		},
 		updateUserIPhone(state, userPhone) {
 			state.userPhone = userPhone
@@ -83,7 +87,17 @@ const store = new Vuex.Store({
           reject(error)
         })
       })
-    },
+		},
+		updateUserPhone({ commit }, mobile) {
+      return new Promise((resolve, reject) => {
+				updateUserInfo({ mobile }).then(() => {
+					commit('updateUserIPhone', mobile)
+					resolve()
+				}).catch(error => {
+          reject(error)
+        })
+      })
+		},
 		logout({ commit }) {
       return new Promise((resolve, reject) => {
 				logout().then(() => {

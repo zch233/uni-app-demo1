@@ -95,7 +95,7 @@
 		},
 		computed: mapState(['forcedLogin', 'hasLogin', 'userName']),
 		onLoad(e) {
-			// this.init(e)
+			this.init(e)
 		},
 		methods: {
 			init ({ invite_uid }) {

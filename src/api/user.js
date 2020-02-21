@@ -43,3 +43,7 @@ export function globalInfo (data) {
 export function payVip (data) {
   return request('/collect/develop_pay', data)
 }
+
+export function decrypt (data) {
+  return request('/decrypt', data)
+}
