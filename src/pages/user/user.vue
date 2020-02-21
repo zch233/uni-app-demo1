@@ -94,14 +94,25 @@
 			账户设置
 			<image mode='widthFix' src="/static/img/right.png"></image>
 		</navigator>
+		<uniPopup ref="popup" :maskClick="false">
+			<view class="couponWrapper">
+				<view class="couponWrapper-title">门店抵用券<image @tap="$refs.popup.close()" mode='widthFix' src="/static/img/close.png"></image></view>
+				<view class="couponWrapper-time">有效期至：2020/3/31</view>
+				<view class="couponWrapper-price"><text>300</text>元优惠券</view>
+				<view class="couponWrapper-tips">商家扫描条形码使用</view>
+				<image class="couponWrapper-code" mode='widthFix' src="/static/img/testCode.png"></image>
+			</view>
+		</uniPopup>
 	</view>
 </template>
 
 <script>
 	import { login, updateUserInfo, getUserInfo, getCouponList } from '@/api/user.js'
 	import { mapState, mapMutations } from 'vuex'
+	import uniPopup from 'components/uni-popup/uni-popup.vue'
 
 	export default {
+		components: { uniPopup },
 		computed: {
 			...mapState(['hasLogin', 'forcedLogin', 'userPhone', 'userAvater', 'userName', 'userVip', 'userVipInfo']),
 			userInfoMember_time () {
@@ -540,6 +551,52 @@
 	margin: 38rpx 0;
 	image {
 		width: 18rpx;
+	}
+}
+.couponWrapper {
+	background-image: url('~@/static/img/couponWrapperBg.png');
+	background-repeat: no-repeat;
+	background-size: 100%;
+	width: 670rpx;
+	padding: 16rpx;
+	text-align: center;
+	line-height: 1;
+	box-sizing: border-box;
+	&-title {
+		position: relative;
+		color: #F22061;
+		font-weight: bold;
+		font-size: 36rpx;
+		padding: 34rpx 10rpx;
+		border-bottom: 3rpx dashed #f2f2f2;
+		image {
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
+			right: 0;
+			width: 36rpx;
+		}
+	}
+	&-time {
+		color: #6B6B6B;
+		font-size: 30rpx;
+		margin: 82rpx 0 22rpx
+	}
+	&-price {
+		color: #333333;
+		font-size: 60rpx;
+		margin-bottom: 70rpx;
+		text {
+			color: #FE4040;
+		}
+	}
+	&-tips {
+		color: #131313;
+		font-size: 28rpx;
+		margin-bottom: 22rpx;
+	}
+	&-code {
+		width: 520rpx;
 	}
 }
 </style>

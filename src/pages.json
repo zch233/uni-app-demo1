@@ -90,7 +90,7 @@
 		"list": [
 			{
 				"name": "test",
-				"path": "pages/index/index"
+				"path": "pages/user/user"
 			}
 		]
 	},

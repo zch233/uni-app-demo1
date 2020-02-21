@@ -121,7 +121,7 @@
 		},
 		methods: {
 			init ({ invite_uid }) {
-				this.checkLogin(invite_uid)
+				// this.checkLogin(invite_uid)
 			},
 			checkLogin (invite_uid) {
 				if (!this.hasLogin) {
