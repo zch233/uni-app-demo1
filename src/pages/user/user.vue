@@ -159,12 +159,13 @@
 				return date.toJSON().substr(0, 19).replace('T', ' ');
 			},
 			getWxUserInfo () {
+				const _this = this
 				uni.showLoading({ title: '加载中' });
 				uni.getUserInfo({
 					provider: 'weixin',
 					success: async ({ userInfo }) => {
-						this.$store.dispatch('updateUserInfo', userInfo).then(() => {
-							this.getUserInfo()
+						_this.$store.dispatch('updateUserInfo', userInfo).then(() => {
+							_this.getUserInfo()
 							uni.showToast({ icon: 'none', title: '登陆成功' })
 						}).catch((err) => {
 							uni.showToast({ icon: 'none', title: '更新失败' })
@@ -173,7 +174,8 @@
 						})
 					},
 					fail() {
-						this.getUserInfo()
+						_this.getUserInfo()
+						uni.hideLoading();
 						uni.showToast({
 							icon: 'none',
 							title: '请手动点击登陆 / 注册'
