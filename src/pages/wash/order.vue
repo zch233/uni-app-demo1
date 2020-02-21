@@ -142,9 +142,13 @@
 				}
 				this.couponList = data.data.data
 				this.couponList.map(v => {
-					v.coupon_start_time = new Date(v.coupon_start).toLocaleDateString().replace(/\//g, ".")
-					v.coupon_end_time = new Date(v.coupon_end).toLocaleDateString().replace(/\//g, ".")
+					v.coupon_start_time = this.time(v.coupon_start * 1000).split(' ')[0].replace(/\-/g, '.')
+					v.coupon_end_time = this.time(v.coupon_end * 1000).split(' ')[0].replace(/\-/g, '.')
 				})
+			},
+			time (time = +new Date()) {
+				let date = new Date(time + 8 * 3600 * 1000); // 增加8小时
+				return date.toJSON().substr(0, 19).replace('T', ' ');
 			},
 			async getOrderInfo (id) {
 				uni.showLoading({ title: '正在获取订单' });

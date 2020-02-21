@@ -26,7 +26,7 @@
 						<view class="userCard-progressBar-progress-main-leftDay">剩余{{ twoDateDays }}天</view>
 					</view>
 				</view>
-				<view class="userCard-progressBar-time">{{ new Date(userVipInfo.member_time * 1000).toLocaleDateString().replace(/\//g, ".") }} 到期</view>
+				<view class="userCard-progressBar-time">{{ userInfoMember_time }} 到期</view>
 			</view>
 			<view class="userCard-numberBar">
 				<view class="userCard-numberBar-number" v-if="userVip">NO.{{ userVipInfo.uid }}</view>
@@ -104,8 +104,11 @@
 	export default {
 		computed: {
 			...mapState(['hasLogin', 'forcedLogin', 'userPhone', 'userAvater', 'userName', 'userVip', 'userVipInfo']),
+			userInfoMember_time () {
+				return this.time(this.userInfo.member_time * 1000).split(' ')[0]
+			},
 			twoDateDays () {
-				return this.getDays(new Date(this.userInfo.member_time * 1000).toLocaleDateString().replace(/\//g, "-"), new Date().toLocaleDateString().replace(/\//g, "-"))
+				return this.getDays(this.userInfoMember_time, this.time().split(' ')[0])
 			}
 		},
 		onLoad () {
@@ -137,6 +140,11 @@
 				let days = Math.abs(minusDays);//取绝对值
 				return days;
 			},
+			time (temp) {
+				let time = temp || +new Date()
+				let date = new Date(time + 8 * 3600 * 1000); // 增加8小时
+				return date.toJSON().substr(0, 19).replace('T', ' ');
+			},
 			getWxUserInfo () {
 				uni.showLoading({ title: '加载中' });
 				uni.getUserInfo({
@@ -167,8 +175,8 @@
           return
         }
 				const list = data.data.data.map(v => {
-					v.coupon_start_time = new Date(v.coupon_start * 1000).toLocaleDateString().replace(/\//g, ".")
-					v.coupon_end_time = new Date(v.coupon_end * 1000).toLocaleDateString().replace(/\//g, ".")
+					v.coupon_start_time = this.time(v.coupon_start * 1000).split(' ')[0].replace(/\-/g, '.')
+					v.coupon_end_time = this.time(v.coupon_end * 1000).split(' ')[0].replace(/\-/g, '.')
 					return v
 				})
 				if (status === 2) {
