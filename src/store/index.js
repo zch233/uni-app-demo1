@@ -23,7 +23,7 @@ const store = new Vuex.Store({
 	mutations: {
 		login(state, data) {
 			state.userName = data.nickname
-			state.userVip = state.hasLogin && (data.type === 1 ? false : true)
+			state.userVip = data.type === 1 ? false : true
 			state.tempLogin = true
 		},
 		updateUserInfo(state, userInfo) {
@@ -34,6 +34,8 @@ const store = new Vuex.Store({
 		},
 		updateUserVipInfo(state, userVipInfo) {
 			state.userVipInfo = userVipInfo
+			console.log(state.hasLogin, 1111)
+			state.userVip = state.hasLogin && (userVipInfo.type === 1 ? false : true)
 		},
 		updateUserIPhone(state, userPhone) {
 			state.userPhone = userPhone

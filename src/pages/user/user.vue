@@ -124,7 +124,6 @@
 		},
 		onLoad () {
 			this.getWxUserInfo()
-			this.getUserInfo()
 			this.getUserCoupon(2)
 		},
 		data () {
@@ -165,6 +164,7 @@
 					provider: 'weixin',
 					success: async ({ userInfo }) => {
 						this.$store.dispatch('updateUserInfo', userInfo).then(() => {
+							this.getUserInfo()
 							uni.showToast({ icon: 'none', title: '登陆成功' })
 						}).catch((err) => {
 							uni.showToast({ icon: 'none', title: '更新失败' })
