@@ -96,7 +96,7 @@
 		"list": [
 			{
 				"name": "test",
-				"path": "pages/user/couponUse"
+				"path": "pages/user/user"
 			}
 		]
 	},
