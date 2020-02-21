@@ -173,6 +173,7 @@
 						})
 					},
 					fail() {
+						this.getUserInfo()
 						uni.showToast({
 							icon: 'none',
 							title: '请手动点击登陆 / 注册'
