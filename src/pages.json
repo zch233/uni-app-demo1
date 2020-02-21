@@ -83,6 +83,12 @@
 			"style": {
 				"navigationBarTitleText": "个人资料"
 			}
+		},
+		{
+			"path": "pages/user/couponUse",
+			"style": {
+				"navigationBarTitleText": "核销"
+			}
 		}
 	],
 	"condition": {
@@ -90,7 +96,7 @@
 		"list": [
 			{
 				"name": "test",
-				"path": "pages/user/user"
+				"path": "pages/user/couponUse"
 			}
 		]
 	},
