@@ -98,7 +98,7 @@
 			</view>
 			<view @click="$refs.popup.close()" class="content-couponButton">确认</view>
 		</uniPopup>
-		<canvas canvas-id="shareCanvas" style="position:absolute;width:750px;height:1798px;z-index:-1;"></canvas>
+		<canvas canvas-id="shareCanvas" style="position:absolute;width:750px;height:1798px;z-index:-1;top:0;left:0;transform:scale(0.01);"></canvas>
 	</view>
 </template>
 
@@ -187,9 +187,7 @@
 				}
 			},
 			async getQRCode () {
-        uni.showLoading({ title: '正在生成分享' });
         const [error , { data }] = await getQRCode()
-        uni.hideLoading();
         if (error) {
           uni.showToast({ icon: 'none', title: '分享生成失败' })
           return
@@ -202,32 +200,52 @@
 			},
 			async save () {
 				if (!this.checkLogin()) return
+				uni.showLoading({ title: '正在生成海报' });
 				const img = await this.getQRCode({ type: 2 })
-				const ctx = wx.createCanvasContext('shareCanvas');
-				// ctx.drawImage('/static/img/poster.png', 0, 0, 750, 1798);
-				// ctx.draw()
-				ctx.drawImage(img, 154, 1592, 147, 147);
-				ctx.draw(true)
-				setTimeout(function () {
-					uni.canvasToTempFilePath({
-						x: 0,
-						y: 0,
-						width: 750,
-						height: 1798,
-						canvasId: 'shareCanvas',
-						success: function (res) {
-							uni.saveImageToPhotosAlbum({
-								filePath: res.tempFilePath,
-								success: (res) => {
-									uni.showToast({ title: '保存成功' })
+				const aa = wx.getFileSystemManager();
+				aa.writeFile({
+					filePath: `${wx.env.USER_DATA_PATH}/qrcode.png`,
+					data: img.slice(22),
+					encoding: 'base64',
+					success: res => {
+						const ctx = wx.createCanvasContext('shareCanvas');
+						ctx.drawImage('/static/img/poster.png', 0, 0, 750, 1798);
+						ctx.draw()
+						ctx.drawImage(`${wx.env.USER_DATA_PATH}/qrcode.png`, 154, 1592, 147, 147);
+						ctx.draw(true)
+						setTimeout(function () {
+							uni.canvasToTempFilePath({
+								x: 0,
+								y: 0,
+								width: 750,
+								height: 1798,
+								canvasId: 'shareCanvas',
+								success: function (res) {
+									uni.saveImageToPhotosAlbum({
+										filePath: res.tempFilePath,
+										success: (res) => {
+											uni.hideLoading();
+											uni.showToast({ title: '保存成功' })
+										},
+										fail: (err) => {
+											console.log(err)
+											uni.showToast({ icon: 'none', title: '保存失败' })
+										}
+									})
 								},
 								fail: (err) => {
+									console.log(err)
 									uni.showToast({ icon: 'none', title: '保存失败' })
 								}
 							})
-						}
-					})
-				}, 200)
+						}, 200)
+					},
+					fail: err => {
+						console.log(err)
+						uni.showToast({ icon: 'none', title: '保存失败' })
+					}
+			 	})
+				
 			},
 			time (time = +new Date()) {
 				let date = new Date(time + 8 * 3600 * 1000); // 增加8小时
