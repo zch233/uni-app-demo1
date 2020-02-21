@@ -81,8 +81,10 @@
 								});
 							}
 						}
-					});
-				}
+          });
+          return false
+        }
+        return true
 			},
       async getGoodList (refresh) {
         uni.showLoading({ title: '正在获取商品' });
@@ -117,6 +119,7 @@
         this.getGoodList('refresh')
       },
       async settleOrder () {
+        if (!this.init()) return
         const goods_info = {}
         this.goodList.filter(v => v.num !== 0).map(v => (goods_info[v.id] = v.num))
         uni.showLoading({ title: '正在生成订单' });

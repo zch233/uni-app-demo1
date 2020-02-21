@@ -1,9 +1,9 @@
 <template>
 	<view class="content">
 		<view class="userCard" :class="{ vvip: userVip }">
-			<navigator url="/pages/user/profile" class="userCard-userInfo">
-				<image mode='widthFix' class="userCard-userInfo-img" :src="userAvater"></image>
-				<view v-if="hasLogin" class="userCard-userInfo-brief">
+			<view class="userCard-userInfo">
+				<image mode='widthFix' class="userCard-userInfo-img" :src="userAvater" @tap="goToProfile"></image>
+				<view v-if="hasLogin" class="userCard-userInfo-brief" @tap="goToProfile">
 					<view class="userCard-userInfo-brief-name">
 						{{ userName }}
 						<image mode='widthFix' v-if="userVip" src="/static/img/userVip.png"></image>
@@ -18,7 +18,7 @@
 				</view>
 				<view class="userCard-userInfo-rank" v-if="userVip">黄金会员</view>
 				<view class="userCard-userInfo-rank" v-if="!userVip">普通会员</view>
-			</navigator>
+			</view>
 			<view class="userCard-progressBar" v-if="userVip">
 				<view class="userCard-progressBar-progress">
 					<view class="userCard-progressBar-progress-bg"></view>
@@ -138,6 +138,9 @@
 		},
 		methods: {
 			...mapMutations(['updateUserVipInfo', 'updateUserIPhone']),
+			goToProfile () {
+				uni.navigateTo({ url: '/pages/user/profile' })
+			},
 			getDays(date1 , date2){
 				let date1Str = date1.split("-");//将日期字符串分隔为数组,数组元素分别为年.月.日
 				//根据年 . 月 . 日的值创建Date对象

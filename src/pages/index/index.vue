@@ -76,9 +76,9 @@
 		</view>
 		<view class="vipContent-shareBar">
 			<view class="vipContent-shareBar-button" @click="save">生成海报</view>
-			<navigator class="vipContent-shareBar-button" url="/pages/index/vipShare">面对面分享</navigator>
+			<view class="vipContent-shareBar-button" @tap="goToVipShare">面对面分享</view>
 		</view>
-		<navigator url="/pages/index/vipPay" class="vipContent-buyButton">￥<text>998/</text>年 购买会员权益</navigator>
+		<view @tap="goToVipPay" class="vipContent-buyButton">￥<text>998/</text>年 购买会员权益</view>
 		<uniPopup ref="popup" :maskClick="false">
 			<view class="content-couponWrapper">
 				<view class="content-couponTitle">会员好礼！</view>
@@ -98,7 +98,7 @@
 			</view>
 			<view @click="$refs.popup.close()" class="content-couponButton">确认</view>
 		</uniPopup>
-		<canvas canvas-id="shareCanvas" style="position:absolute;width:750px;height:1798px;z-index:-1;top:0;left:0;transform:scale(0.01);"></canvas>
+		<canvas canvas-id="shareCanvas" style="position:absolute;width:750px;height:1798px;z-index:-1;"></canvas>
 	</view>
 </template>
 
@@ -121,9 +121,17 @@
 		},
 		methods: {
 			init ({ invite_uid }) {
-				// this.checkLogin(invite_uid)
+				this.checkLogin(invite_uid)
 			},
-			checkLogin (invite_uid) {
+			goToVipPay () {
+				if (!this.checkLogin()) return
+				uni.navigateTo({ url: '/pages/index/vipPay' })
+			},
+			goToVipShare () {
+				if (!this.checkLogin()) return
+				uni.navigateTo({ url: '/pages/index/vipShare' })
+			},
+			checkLogin (invite_uid = 0) {
 				if (!this.hasLogin) {
 					uni.login({
 						provider: 'weixin',
@@ -153,8 +161,10 @@
 							console.error('授权登录失败：' + JSON.stringify(err));
 						}
 					});
+					return false
 				} else {
 					this.getShareCoupon()
+					return true
 				}
 			},
 			async getShareCoupon () {
@@ -191,11 +201,14 @@
 				return data.data.img
 			},
 			async save () {
+				if (!this.checkLogin()) return
 				const img = await this.getQRCode({ type: 2 })
 				const ctx = wx.createCanvasContext('shareCanvas');
-				ctx.drawImage('/static/img/poster.png', 0, 0, 750, 1798);
+				// ctx.drawImage('/static/img/poster.png', 0, 0, 750, 1798);
+				// ctx.draw()
 				ctx.drawImage(img, 154, 1592, 147, 147);
-				ctx.draw(true, function () {
+				ctx.draw(true)
+				setTimeout(function () {
 					uni.canvasToTempFilePath({
 						x: 0,
 						y: 0,
@@ -214,7 +227,7 @@
 							})
 						}
 					})
-				})
+				}, 200)
 			},
 			time (time = +new Date()) {
 				let date = new Date(time + 8 * 3600 * 1000); // 增加8小时
