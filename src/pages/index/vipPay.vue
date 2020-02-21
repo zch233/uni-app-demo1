@@ -46,7 +46,7 @@
     methods: {
       confirmPay () {
         this.$refs.popup.close()
-        uni.switchTab({ url: '/pages/index/index' })
+        uni.reLaunch({ url: '/pages/index/index' })
       },
       async payVip () {
         uni.showLoading({ title: '正在支付' });

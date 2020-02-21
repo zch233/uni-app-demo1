@@ -123,7 +123,7 @@
 			}
 		},
 		methods: {
-			...mapMutations(['updateUserVipInfo']),
+			...mapMutations(['updateUserVipInfo', 'updateUserIPhone']),
 			getDays(date1 , date2){
 				let date1Str = date1.split("-");//将日期字符串分隔为数组,数组元素分别为年.月.日
 				//根据年 . 月 . 日的值创建Date对象
@@ -188,6 +188,7 @@
 				}
 				this.userInfo = data.data.user_info
 				this.updateUserVipInfo(data.data.user_info)
+				this.updateUserIPhone(data.data.user_info.mobile)
         this.orderInfo = data.data.order_count
 			},
 			async getCouponMore () {
