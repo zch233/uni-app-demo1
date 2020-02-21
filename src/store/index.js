@@ -56,9 +56,9 @@ const store = new Vuex.Store({
 				resolve()
       })
 		},
-		login({commit}, js_code) {
+		login({commit}, { code, invite_uid }) {
 			return new Promise(async (resolve, reject) => {
-				const [error, { data }] = await login({ js_code })
+				const [error, { data }] = await login({ js_code: code, invite_uid })
 				if (error) {
 					reject(error)
 					return

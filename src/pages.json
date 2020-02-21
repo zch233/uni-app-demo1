@@ -44,12 +44,6 @@
 			}
 		},
 		{
-			"path": "pages/login/login",
-			"style": {
-				"navigationBarTitleText": "登录"
-			}
-		},
-		{
 			"path": "pages/user/user",
 			"style": {
 				"navigationBarTitleText": "我的",
@@ -111,9 +105,9 @@
 			"selectedIconPath": "static/img/washHL.png"
 		}, {
 			"pagePath": "pages/index/index",
-			"text": "",
+			"text": "盲果会员",
 			"iconPath": "static/img/home.png",
-			"selectedIconPath": "static/img/home.png"
+			"selectedIconPath": "static/img/homeHL.png"
 		}, {
 			"pagePath": "pages/user/user",
 			"text": "我的",

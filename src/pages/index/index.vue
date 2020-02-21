@@ -95,25 +95,37 @@
 		},
 		computed: mapState(['forcedLogin', 'hasLogin', 'userName']),
 		onLoad(e) {
-			console.log(e, 'e.invite_uid')
-			// this.init()
+			// this.init(e)
 		},
 		methods: {
-			init () {
+			init ({ invite_uid }) {
 				if (!this.hasLogin) {
-					uni.showModal({
-						title: '未登录',
-						content: '您未登录，需要登录后才能继续',
-						/**
-						 * 如果需要强制登录，不显示取消按钮.
-						 */
-						showCancel: !this.forcedLogin,
-						success: (res) => {
-							if (res.confirm) {
-								uni.reLaunch({
-									url: '../user/user'
+					uni.login({
+						provider: 'weixin',
+						success: async ({ code }) => {
+							uni.showLoading({ title: '加载中' });
+							this.$store.dispatch('login', { code, invite_uid }).then(() => {
+								uni.hideLoading();
+								console.log('登陆成功')
+								uni.showModal({
+									title: '未登录',
+									content: '您未登录，需要登录后才能继续',
+									/**
+									 * 如果需要强制登录，不显示取消按钮.
+									 */
+									showCancel: !this.forcedLogin,
+									success: (res) => {
+										if (res.confirm) {
+											uni.reLaunch({
+												url: '../user/user'
+											});
+										}
+									}
 								});
-							}
+							})
+						},
+						fail: (err) => {
+							console.error('授权登录失败：' + JSON.stringify(err));
 						}
 					});
 				}
