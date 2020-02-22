@@ -47,3 +47,7 @@ export function payVip (data) {
 export function decrypt (data) {
   return request('/decrypt', data)
 }
+
+export function getExpreeTrack (data) {
+  return request('/collect/get_sf_route', data)
+}

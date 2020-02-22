@@ -34,7 +34,6 @@ const store = new Vuex.Store({
 		},
 		updateUserVipInfo(state, userVipInfo) {
 			state.userVipInfo = userVipInfo
-			console.log(state.hasLogin, 1111)
 			state.userVip = state.hasLogin && (userVipInfo.type === 1 ? false : true)
 		},
 		updateUserIPhone(state, userPhone) {
@@ -76,7 +75,9 @@ const store = new Vuex.Store({
 					reject(globalError)
 					return
 				}
-				commit('saveGlobalInfo', globalData.data.data)
+				const globalDataInfo = {}
+				globalData.data.data.map(v => (globalDataInfo[v.name] = v))
+				commit('saveGlobalInfo', globalDataInfo)
 				resolve()
       })
 		},

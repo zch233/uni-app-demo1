@@ -13,7 +13,7 @@
     </swiper>
     <view class="product-list">
       <view class="product-list-item" v-for="item in goodList" :key="item.id">
-        <image mode='widthFix' class="product-list-item-img" src="/static/img/good.png"></image>
+        <image mode='widthFix' class="product-list-item-img" :src="item.image"></image>
         <view class="product-list-item-info">
           <view class="product-list-item-info-title">{{ item.title }}</view>
           <view class="product-list-item-info-des">{{ item.desc }}</view>

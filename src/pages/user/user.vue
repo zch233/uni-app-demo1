@@ -254,7 +254,7 @@
 	padding: 40rpx;
 	position: relative;
 	z-index: 1;
-	margin-bottom: 38rpx;
+	margin-bottom: 8rpx;
 	&.vvip::before {
 		content: '';
 		left: 40rpx;
@@ -407,26 +407,27 @@
 		justify-content: space-between;
 		font-weight: bold;
 		font-size: 35rpx;
-		margin-bottom: 50rpx;
+		padding: 30rpx 0;
+		margin-bottom: 20rpx;
 		image {
 			width: 18rpx;
 		}
 	}
 	&-menu {
 		@extend %flex;
-		padding: 0 18rpx;
 		font-size: 26rpx;
 		font-weight: bold;
 		justify-content: space-between;
 		&-item {
 			position: relative;
 			text-align: center;
+			padding: 18rpx;
 		}
 		text {
 			$r: 30rpx;
 			position: absolute;
-			right: -($r / 2);
-			top: -($r / 2);
+			right: 0;
+			top: 0;
 			color: #fff;
 			background-color: #F22061;
 			border-radius: 50%;
@@ -554,7 +555,7 @@
 	justify-content: space-between;
 	font-weight: bold;
 	font-size: 35rpx;
-	margin: 38rpx 0;
+	padding: 38rpx 0;
 	image {
 		width: 18rpx;
 	}

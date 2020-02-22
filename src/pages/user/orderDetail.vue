@@ -1,33 +1,33 @@
 <template>
 	<view class="content">
-		<view class="card firstFloor" v-if="false">
+		<view class="card firstFloor" v-if="orderInfo.status >= 3">
 			<view class="packageBar">
 				<image mode='widthFix' src="/static/img/orderDetail-package.png"></image>
 				<view>
 					<view class="firstFloor-name">包裹正在等待揽收</view>
-					<view class="firstFloor-time">2020/02/02 15:23</view>
+					<view class="firstFloor-time">{{ orderLog.map(v => v.desc === '快递已揽件' && v.created_time).filter(Boolean).join() }}</view>
 				</view>
 			</view>
-			<view class="storeBar">
+			<view class="storeBar" v-if="orderInfo.status >= 4">
 				<image mode='widthFix' src="/static/img/orderDetail-store.png"></image>
 				<view>
-					<view class="firstFloor-name">门店名称<text>15655191620</text></view>
-					<view class="firstFloor-address">浙江省杭州市江干区 九堡街道 九堡家苑二区9排 29号</view>
-					<view class="firstFloor-time">2020/02/02 15:23</view>
+					<view class="firstFloor-name">{{ globalInfo.center_user.value }}<text>{{ globalInfo.center_phone.value }}</text></view>
+					<view class="firstFloor-address">{{ globalInfo.center_address.value }}</view>
+					<view class="firstFloor-time">{{ orderLog.map(v => v.desc === '门店已收货' && v.created_time).filter(Boolean).join() }}</view>
 				</view>
 			</view>
-			<view class="locationBar">
+			<view class="locationBar" v-if="orderInfo.status >= 6">
 				<image mode='widthFix' src="/static/img/orderDetail-location.png"></image>
 				<view>
-					<view class="firstFloor-name">唐泽（先生）<text>15655191620</text></view>
-					<view class="firstFloor-address">浙江省杭州市江干区 九堡街道 九堡家苑二区9排 29号</view>
-					<view class="firstFloor-time">2020/02/02 15:23</view>
+					<view class="firstFloor-name">{{ orderInfo.nickname }}<text>{{ orderInfo.mobile }}</text></view>
+					<view class="firstFloor-address">{{ orderInfo.province + orderInfo.city + orderInfo.district + orderInfo.address }}</view>
+					<view class="firstFloor-time">{{ orderLog.map(v => v.desc === '用户已确认' && v.created_time).filter(Boolean).join() }}</view>
 				</view>
 			</view>
 		</view>
 		<view class="card secondFloor">
 			<view class="secondFloor-goodItem" v-for="item in orderGoodList" :key="item.id">
-				<image mode='widthFix' src="/static/img/good.png"></image>
+				<image mode='widthFix' :src="item.image"></image>
 				<view>{{ item.title }}x{{ item.buy_number }}</view>
 				<view class="secondFloor-goodItem-price">￥{{ item.totalPrice }}</view>
 			</view>
@@ -52,8 +52,8 @@
 			<view class="thirdFloor-info" v-for="item in orderLog" :key="item.desc">{{ item.desc }}：{{ item.created_time }}</view>
 		</view>
 		<view class="buttonBar">
-			<view class="buttonBar-store">联系门店</view>
-			<view class="buttonBar-express">联系顺风</view>
+			<view class="buttonBar-store" @tap="touchStore">联系门店</view>
+			<view class="buttonBar-express" @tap="touchSH">联系顺风</view>
 		</view>
 		<view class="payNow" v-if="orderInfo.status === 5" @tap="showConfirmOrder">立即收货</view>
 		<navigator class="payNow" :url="`/pages/wash/order?id=${orderInfo.id}`" v-if="orderInfo.status === 1">立即支付</navigator>
@@ -64,7 +64,7 @@
 				<view class="buttonBar">
 					<view class="buttonBar-cancel" @tap="$refs.popup.close()">取消</view>
 					<view class="buttonBar-confirm" @tap="confirmOrder">确认</view>
-				</view>		
+				</view>
 			</view>
     </uniPopup>
 		<uniPopup ref="cancelPopup" :maskClick="false" type="bottom">
@@ -77,9 +77,13 @@
 	import { getOrderList, cancelOrder, confirmOrder } from '@/api/user.js'
 	import uniPopup from 'components/uni-popup/uni-popup.vue'
 	import cancelPopup from 'components/cancel-popup/cancel-popup.vue'
+	import { mapState } from 'vuex'
 
 	export default {
 		components: { uniPopup, cancelPopup },
+		computed: {
+			...mapState(['globalInfo']),
+		},
 		onLoad (e) {
 			this.getOrderInfo(e.id)
 		},
@@ -97,6 +101,12 @@
 			},
 			showCancelOrder () {
 				this.$refs.cancelPopup.open()
+			},
+			touchStore () {
+				uni.makePhoneCall({ phoneNumber: this.globalInfo.center_phone.value })
+			},
+			touchSF () {
+				uni.makePhoneCall({ phoneNumber: this.globalInfo.sf_phone.value })
 			},
 			async getOrderInfo (id) {
 				uni.showLoading({ title: '正在获取订单' });
@@ -152,28 +162,29 @@
 				margin-bottom: 0;
 			}
 		}
-		.packageBar::before {
+		.storeBar::before {
 			content: '';
 			position: absolute;
-			top: 60rpx;
+			top: -84rpx;
 			left: 40rpx;
 			width: 2rpx;
 			height: 84rpx;
 			background-image: linear-gradient(to bottom, rgb(242, 190, 81) 0%, rgb(242, 190, 81) 50%, rgb(107, 170, 247) 50%, rgb(107, 170, 247) 100%);
 		}
-		.storeBar::before {
+		.locationBar::before {
 			content: '';
 			position: absolute;
-			top: 54rpx;
+			top: -170rpx;
 			left: 40rpx;
 			width: 2rpx;
-			height: 200rpx;
+			height: 170rpx;
 			background-image: linear-gradient(to bottom, rgb(107, 170, 247) 0%, rgb(107, 170, 247) 50%, rgb(242, 51, 111) 50%, rgb(242, 51, 111) 100%);
 		}
 		image {
 			width: 60rpx;
 			margin-right: 22rpx;
 			margin-left: 10rpx;
+			background-color: #fff;
 		}
 		&-name {
 			text {
