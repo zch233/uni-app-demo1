@@ -6,7 +6,7 @@
 				<view class="scroll-item-title-status">{{ status[good.status] }}</view>
 			</view>
 			<view class="scroll-item-info">
-				<image src="/static/img/good.png"></image>
+				<image :src="good.image"></image>
 				<view>
 					<view class="scroll-item-info-des">{{ good.goods_detail.map(v => `${v.title}x${v.buy_number}`).join('，') }}</view>
 					<view class="scroll-item-info-total">共计{{ good.goods_detail.map(v => v.buy_number).reduce((a, b) => a + b, 0) }}件商品合计<text>￥<text>{{ good.real_price }}</text></text></view>
@@ -14,7 +14,7 @@
 			</view>
 			<view class="scroll-item-bottom" v-if="good.status !== 0">
 				<view class="scroll-item-bottom-button normal" v-if="good.status && good.status < 3 " @tap.stop="showCancelOrder(good)">取消订单</view>
-				<view class="scroll-item-bottom-button normal" v-if="good.status > 3" @tap.stop="viewExpress(good)">查看物流</view>
+				<view class="scroll-item-bottom-button normal" v-if="good.status >= 2" @tap.stop="viewExpress(good)">查看物流</view>
 				<view class="scroll-item-bottom-button highLight" v-if="good.status === 1" @tap.stop="payOrder(good)">去支付</view>
 				<view class="scroll-item-bottom-button highLight" v-if="good.status === 5" @tap.stop="showConfirmOrder(good)">确认收货</view>
 			</view>
@@ -69,7 +69,7 @@
         this.currentOrderInfo = good
       },
       viewExpress (good) {
-        uni.navigateTo({ url: `/pages/user/expressTrack?id=${good.id}` })
+        uni.navigateTo({ url: `/pages/user/expressTrack?order_id=${good.order_id}` })
       },
       payOrder (good) {
         uni.navigateTo({ url: `/pages/wash/order?id=${good.id}` })

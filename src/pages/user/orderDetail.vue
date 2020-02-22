@@ -1,17 +1,17 @@
 <template>
 	<view class="content">
-		<view class="card firstFloor" v-if="orderInfo.status >= 3">
+		<view class="card firstFloor" v-if="orderInfo.status >= 2">
 			<view class="packageBar">
 				<image mode='widthFix' src="/static/img/orderDetail-package.png"></image>
 				<view>
 					<view class="firstFloor-name">包裹正在等待揽收</view>
-					<view class="firstFloor-time">{{ orderLog.map(v => v.desc === '快递已揽件' && v.created_time).filter(Boolean).join() }}</view>
+					<view class="firstFloor-time">{{ orderInfo.created_time }}</view>
 				</view>
 			</view>
 			<view class="storeBar" v-if="orderInfo.status >= 4">
 				<image mode='widthFix' src="/static/img/orderDetail-store.png"></image>
 				<view>
-					<view class="firstFloor-name">{{ globalInfo.center_user.value }}<text>{{ globalInfo.center_phone.value }}</text></view>
+					<view class="firstFloor-name">{{ globalInfo.center_name.value }}<text>{{ globalInfo.center_phone.value }}</text></view>
 					<view class="firstFloor-address">{{ globalInfo.center_address.value }}</view>
 					<view class="firstFloor-time">{{ orderLog.map(v => v.desc === '门店已收货' && v.created_time).filter(Boolean).join() }}</view>
 				</view>
@@ -53,7 +53,7 @@
 		</view>
 		<view class="buttonBar">
 			<view class="buttonBar-store" @tap="touchStore">联系门店</view>
-			<view class="buttonBar-express" @tap="touchSH">联系顺风</view>
+			<view class="buttonBar-express" @tap="touchSF">联系顺风</view>
 		</view>
 		<view class="payNow" v-if="orderInfo.status === 5" @tap="showConfirmOrder">立即收货</view>
 		<navigator class="payNow" :url="`/pages/wash/order?id=${orderInfo.id}`" v-if="orderInfo.status === 1">立即支付</navigator>
