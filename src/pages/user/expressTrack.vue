@@ -45,7 +45,38 @@
 </template>
 
 <script>
+  import { getExpressTrack } from '@/api/user.js'
+  
 	export default {
+    data () {
+      return {
+        order_id: ''
+      }
+    },
+    onLoad(e) {
+      this.order_id = e.order_id
+      this.getExpressTrack()
+    },
+    methods: {
+      async getExpressTrack (refresh) {
+        uni.showLoading({ title: '加载中' });
+				const [error, { data }] = await getExpressTrack({ order_id: this.order_id })
+				if (refresh) uni.stopPullDownRefresh()
+        uni.hideLoading();
+        if (error) {
+          uni.showToast({ icon: 'none', title: '获取失败' })
+          return
+        }
+        if (data.code !== 'success') {
+					uni.showToast({ icon: 'none', title: data.msg })
+					return
+				}
+        this.orderInfo = data.data.order_count
+      }
+    },
+    onPullDownRefresh() {
+      this.getExpressTrack('refresh')
+    },
 	}
 </script>
 

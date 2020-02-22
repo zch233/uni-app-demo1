@@ -75,7 +75,8 @@
 		{
 			"path": "pages/user/expressTrack",
 			"style": {
-				"navigationBarTitleText": "物流信息"
+				"navigationBarTitleText": "物流信息",
+				"enablePullDownRefresh": true
 			}
 		},
 		{

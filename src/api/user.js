@@ -48,6 +48,6 @@ export function decrypt (data) {
   return request('/decrypt', data)
 }
 
-export function getExpreeTrack (data) {
+export function getExpressTrack (data) {
   return request('/collect/get_sf_route', data)
 }

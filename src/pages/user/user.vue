@@ -211,6 +211,10 @@
           uni.showToast({ icon: 'none', title: '获取失败' })
           return
 				}
+				if (data.code !== 'success') {
+					uni.showToast({ icon: 'none', title: data.msg })
+					return
+				}
 				this.userInfo = data.data.user_info
 				this.updateUserVipInfo(data.data.user_info)
 				this.updateUserIPhone(data.data.user_info.mobile)

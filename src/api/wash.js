@@ -11,3 +11,8 @@ export function createOrder (data) {
 export function payNow (data) {
   return request('/collect/pay', data)
 }
+
+export function getBanner (data) {
+  return request('/collect/get_banner', data)
+}
+

@@ -1,14 +1,8 @@
 <template>
 	<view class="content">
 		<swiper :indicator-dots="true">
-      <swiper-item>
-        <image mode='widthFix' class="swiperImg" src="/static/img/swiper.png"></image>
-      </swiper-item>
-      <swiper-item>
-        <image mode='widthFix' class="swiperImg" src="/static/img/swiper.png"></image>
-      </swiper-item>
-      <swiper-item>
-        <image mode='widthFix' class="swiperImg" src="/static/img/swiper.png"></image>
+      <swiper-item v-for="item in bannerList" :key="item">
+        <image mode='widthFix' class="swiperImg" :src="'https://wx.mangguovvip.com' + item"></image>
       </swiper-item>
     </swiper>
     <view class="product-list">
@@ -42,13 +36,14 @@
 </template>
 
 <script>
-  import { getGoodList, createOrder } from '@/api/wash.js';
+  import { getGoodList, createOrder, getBanner } from '@/api/wash.js';
   import { mapState } from 'vuex'
 
 	export default {
     data () {
       return {
         goodList: [],
+        bannerList: [],
       }
     },
     computed: {
@@ -61,11 +56,12 @@
       }
     },
     onLoad () {
-      this.init()
+      this.checkLoginStatus()
       this.getGoodList()
+      this.getBanner()
     },
     methods: {
-      init () {
+      checkLoginStatus () {
 				if (!this.hasLogin) {
 					uni.showModal({
 						title: '未登录',
@@ -85,7 +81,19 @@
           return false
         }
         return true
-			},
+      },
+      async getBanner () {
+        const [error, { data }] = await getBanner()
+        if (error) {
+          uni.showToast({ icon: 'none', title: '获取失败' })
+          return
+        }
+        if (data.code !== 'success') {
+					uni.showToast({ icon: 'none', title: data.msg })
+					return
+				}
+        this.bannerList = data.data
+      },
       async getGoodList (refresh) {
         uni.showLoading({ title: '正在获取商品' });
         const [error, { data }] = await getGoodList()
@@ -119,7 +127,7 @@
         this.getGoodList('refresh')
       },
       async settleOrder () {
-        if (!this.init()) return
+        if (!this.checkLoginStatus()) return
         const goods_info = {}
         this.goodList.filter(v => v.num !== 0).map(v => (goods_info[v.id] = v.num))
         uni.showLoading({ title: '正在生成订单' });
