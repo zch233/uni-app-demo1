@@ -69,7 +69,7 @@
         this.currentOrderInfo = good
       },
       viewExpress (good) {
-        uni.navigateTo({ url: `/pages/user/expressTrack?order_id=${good.order_id}` })
+        uni.navigateTo({ url: `/pages/user/expressTrack?order_id=${good.order_id}&status=${good.status}` })
       },
       payOrder (good) {
         uni.navigateTo({ url: `/pages/wash/order?id=${good.id}` })

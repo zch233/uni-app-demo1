@@ -1,44 +1,45 @@
 <template>
 	<view class="content">
     <view class="card goodInfo">
-      <view class="goodInfo-top">
-        <view class="goodInfo-top-item">
-          <image mode='widthFix' src="/static/img/good.png"></image>
-          <view>上衣×2</view>
+      <scroll-view scroll-x class="goodInfo-top" scroll-with-animation>
+        <view class="goodInfo-top-item" v-for="item in goodsList" :key="item.id">
+          <image mode='widthFix' :src="item.image"></image>
+          <view>{{ item.title }}×{{ item.buy_number }}</view>
         </view>
-      </view>
+      </scroll-view>
       <view class="goodInfo-bottom">
-        <view>已发货</view>
-        <text>预计后天到达</text>
+        <view>{{ (status === 4 || statsu === 6) ? '已签收' : '已发货'  }}</view>
+        <text>{{ (status === 4 || statsu === 6) ? '已送达' : '包裹地目的地越来越近了'  }}</text>
       </view>
     </view>
-    <view class="card expressInfo">
+    <view class="card expressInfo send" :class="{ show: hideExpressTrackIndex === 1 }" @tap="switchExpressTrack(1)">
       <image mode='widthFix' src="/static/img/express.png"></image>
       <view>
-        <view>顺丰速运 123456789123</view>
+        <view>顺丰速运 {{ mail_no }}</view>
+        <text>官方电话 95338</text>
+      </view>
+    </view>
+    <view class="card expressInfo collect" :class="{ show: hideExpressTrackIndex === 2, transparent: status <= 4 }" @tap="switchExpressTrack(2)">
+      <image mode='widthFix' src="/static/img/express.png"></image>
+      <view>
+        <view>顺丰速运 {{ mail_no }}</view>
         <text>官方电话 95338</text>
       </view>
     </view>
     <view class="card trackInfo">
       <view class="trackInfo-trackFinall">
-        <image mode='widthFix' src="/static/img/trackFinall.png"></image>
-        <view>收货地址：安徽省池州市 某某街道 某某小区 3 号楼4单元5007</view>
+        <image v-if="status === 4 || statsu === 6" mode='widthFix' src="/static/img/trackFinall-active.png"></image>
+        <image v-else mode='widthFix' src="/static/img/trackFinall.png"></image>
+        <view>收货地址：{{ address }}</view>
       </view>
-      <view class="trackInfo-trackItem">
+      <view class="trackInfo-trackItem" v-for="(item, index) in expressTrack" :key="index">
         <view class="trackInfo-trackItem-time">
-          <view>02-04</view>
-          <text>16:36</text>
+          <view>{{ item.accept_time.split(' ')[0].slice(5) }}</view>
+          <text>{{ item.accept_time.split(' ')[1] }}</text>
         </view>
-        <image mode='widthFix' src="/static/img/trackStore.png"></image>
-        <view class="trackInfo-trackItem-tips">运输中 已离开 合肥分拨中心合肥分拨中心合肥分拨中心</view>
-      </view>
-      <view class="trackInfo-trackItem">
-        <view class="trackInfo-trackItem-time">
-          <view>02-04</view>
-          <text>16:36</text>
-        </view>
-        <image mode='widthFix' src="/static/img/trackStore.png"></image>
-        <view class="trackInfo-trackItem-tips">运输中 已离开 合肥分拨中心</view>
+        <image v-if="index === 0 && status !== 4 && statsu !== 6" mode='widthFix' src="/static/img/wlxx_mdysh_selected.png"></image>
+        <image v-else mode='widthFix' src="/static/img/wlxx_mdysh_default.png"></image>
+        <view class="trackInfo-trackItem-tips">{{ item.remark }}</view>
       </view>
     </view>
 	</view>
@@ -50,32 +51,62 @@
 	export default {
     data () {
       return {
-        order_id: ''
+        order_id: '',
+        status: '',
+        address: '',
+        goodsList: [],
+        mail_no: '',
+        hideExpressTrackIndex: '',
+        expressTrack: [],
       }
     },
     onLoad(e) {
       this.order_id = e.order_id
-      this.getExpressTrack()
+      this.status = e.status
+      this.hideExpressTrackIndex = this.status <= 4 ? 1 : 2
+      this.getExpressTrack(false, this.hideExpressTrackIndex)
     },
     methods: {
-      async getExpressTrack (refresh) {
+      switchExpressTrack (index) {
+        if (this.hideExpressTrackIndex === index) return
+        this.hideExpressTrackIndex = index
+        this.getExpressTrack(false, index)
+      },
+      async getExpressTrack (refresh, type) {
         uni.showLoading({ title: '加载中' });
-				const [error, { data }] = await getExpressTrack({ order_id: this.order_id })
+				const [error, { data }] = await getExpressTrack({ order_id: this.order_id, type })
 				if (refresh) uni.stopPullDownRefresh()
         uni.hideLoading();
         if (error) {
-          uni.showToast({ icon: 'none', title: '获取失败' })
+          uni.showModal({
+            title: '提示',
+            content: '获取失败',
+            showCancel: false,
+            success: (res) => {
+              uni.navigateBack()
+            }
+          });
           return
         }
         if (data.code !== 'success') {
-					uni.showToast({ icon: 'none', title: data.msg })
+          uni.showModal({
+            title: '提示',
+            content: data.msg,
+            showCancel: false,
+            success: (res) => {
+              uni.navigateBack()
+            }
+          });
 					return
 				}
-        this.orderInfo = data.data.order_count
+        this.address = data.data.address
+        this.goodsList = data.data.goods_detail
+        this.expressTrack = data.data.express_route.map(v => v['@attributes']).reverse()
+        this.mail_no = data.data.mail_no
       }
     },
     onPullDownRefresh() {
-      this.getExpressTrack('refresh')
+      this.getExpressTrack('refresh', this.hideExpressTrackIndex)
     },
 	}
 </script>
@@ -95,14 +126,15 @@
     box-sizing: border-box;
   }
   .goodInfo {
+    margin-bottom: 80rpx;
     &-top {
-      display: flex;
       padding: 40rpx;
       font-size: 30rpx;
-      text-align: center;
       box-sizing: border-box;
       &-item {
         margin-right: 42rpx;
+        display: inline-block;
+        text-align: center;
       }
       image {
         width: 120rpx;
@@ -127,6 +159,66 @@
     display: flex;
     align-items: center;
     font-size: 26rpx;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 12rpx 6rpx rgba(0, 0, 0, 0.1);
+    z-index: 0;
+    &.collect {
+      top: -280rpx;
+      z-index: 0;
+      &::before, &::after {
+        content: '';
+        position: absolute;
+      }
+      &::before {
+        width: 110rpx;
+        height: 110rpx;
+        left: -55rpx;
+        top: -55rpx;
+        background-color: rgb(97, 167, 243);
+        transform: rotate(45deg);
+      }
+      &::after {
+        content: '收';
+        color: #fff;
+        font-size: 26rpx;
+        font-weight: bold;
+        left: 8rpx;top: 10rpx;
+      }
+    }
+    &.send {
+      top: -40rpx;
+      &::before, &::after {
+        content: '';
+        position: absolute;
+      }
+      &::before {
+        width: 110rpx;
+        height: 110rpx;
+        left: -55rpx;
+        top: -55rpx;
+        background-color: rgb(243, 32, 98);
+        transform: rotate(45deg);
+      }
+      &::after {
+        content: '寄';
+        color: #fff;
+        font-size: 26rpx;
+        font-weight: bold;
+        left: 8rpx;top: 10rpx;
+      }
+    }
+    &.send.show {
+      z-index: 2;
+      top: 0;
+    }
+    &.collect.show {
+      z-index: 2;
+      top: -240rpx
+    }
+    &.collect.transparent {
+      opacity: 0;
+    }
     image {
       width: 120rpx;
       margin-right: 28rpx;
@@ -141,6 +233,7 @@
     padding: 28rpx 40rpx 28rpx 0;
     line-height: 1.4;
     font-size: 24rpx;
+    margin-top: -236rpx;
     image {
       width: 36rpx;
       margin-right: 11rpx;
@@ -155,16 +248,6 @@
       position: relative;
       > view {
         flex: 1;
-        &::before {
-          content: '';
-          position: absolute;
-          left: 141rpx;
-          top: 36rpx;
-          width: 1rpx;
-          height: 180%;
-          z-index: 0;
-          background-color: #BBBBBB;
-        }
       }
     }
     &-trackItem {
@@ -176,14 +259,11 @@
         content: '';
         position: absolute;
         left: 141rpx;
-        top: 36rpx;
+        bottom: 70rpx;
         width: 1rpx;
         height: 100%;
-        z-index: 0;
+        z-index: -1;
         background-color: #BBBBBB;
-      }
-      &:last-child::before {
-        display: none;
       }
       &-time {
         color: #8C8C8C;
