@@ -144,6 +144,7 @@
     border-radius: 20rpx;
     background-color: #fff;
     box-sizing: border-box;
+    overflow: hidden;
   }
   .goodInfo {
     margin-bottom: 80rpx;
