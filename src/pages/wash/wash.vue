@@ -110,7 +110,10 @@
         this.goodList = this.handleGoodListData(data.data.data)
       },
       handleGoodListData (data) {
-        data.map(v => (v.num = 0))
+        data.map(v => {
+          v.num = 0
+          v.image = 'https://wx.mangguovvip.com' + v.image
+        })
         return data
       },
       calculate(product, operator) {
@@ -154,6 +157,7 @@
 .product-list {
   padding: 30rpx;
   box-sizing: border-box;
+  padding-bottom: 230rpx;
   &-item {
     margin-bottom: 40rpx;
     display: flex;
