@@ -7,26 +7,26 @@
           <view>{{ item.title }}×{{ item.buy_number }}</view>
         </view>
       </scroll-view>
-      <view class="goodInfo-bottom" v-if="status === '2'">
-        <view>已付款</view>
-        <text>快递小哥会按约定时间上门揽件</text>
-      </view>
-       <view class="goodInfo-bottom" v-else-if="status === '3'">
-        <view>运输中</view>
-        <text>包裹正在火速接近门店</text>
-      </view>
-      <view class="goodInfo-bottom" v-else-if="status === '4'">
-        <view>门店签收</view>
-        <text>正在为您加急处理中</text>
-      </view>
-      <view class="goodInfo-bottom" v-else-if="status === '5'">
-        <view>已发货</view>
-        <text>包裹离您越来越近了</text>
-      </view>
-      <view class="goodInfo-bottom" v-else-if="status === '6'">
-        <view>已签收</view>
-        <text>已签收，本人签收</text>
-      </view>
+    </view>
+    <view class="goodInfo-bottom" v-if="status === '2'">
+      <view>已付款</view>
+      <text>快递小哥会按约定时间上门揽件</text>
+    </view>
+      <view class="goodInfo-bottom" v-else-if="status === '3'">
+      <view>运输中</view>
+      <text>包裹正在火速接近门店</text>
+    </view>
+    <view class="goodInfo-bottom" v-else-if="status === '4'">
+      <view>门店签收</view>
+      <text>正在为您加急处理中</text>
+    </view>
+    <view class="goodInfo-bottom" v-else-if="status === '5'">
+      <view>已发货</view>
+      <text>包裹离您越来越近了</text>
+    </view>
+    <view class="goodInfo-bottom" v-else-if="status === '6'">
+      <view>已签收</view>
+      <text>已签收，本人签收</text>
     </view>
     <view class="card expressInfo send" :class="{ show: hideExpressTrackIndex === 1 }" @tap="switchExpressTrack(1)">
       <image mode='widthFix' src="/static/img/express.png"></image>
