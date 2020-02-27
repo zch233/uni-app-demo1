@@ -28,7 +28,7 @@
 		</view>
 		<view class="details">
 			<view class="details-item" v-for="good in orderGoodList" :key="good.id">
-				<image mode='widthFix' class="details-item-img" src="/static/img/good.png"></image>
+				<image mode='widthFix' class="details-item-img" :src="good.image"></image>
 				<view class="details-item-name">{{ good.title }}</view>
 				<view class="details-item-total">x{{ good.buy_number }}</view>
 				<view class="details-item-price">￥<text>{{ good.totalPrice }}</text></view>
@@ -92,6 +92,7 @@
 	export default {
 		components: { uniPopup },
 		computed: {
+			...mapState(['imgPath']),
 			totalPrice() {
 				const price = this.orderInfo.real_price - (this.couponInfo.coupon_price || 0)
 				return price < 0 ? 0.01 : (price.toFixed(2) * 1)
@@ -161,7 +162,10 @@
 				const result = data.data.data[0]
 				this.orderInfo = result
 				this.orderGoodList = result.goods_detail
-				this.orderGoodList.map(v => (v.totalPrice = (v.buy_number * v.price).toFixed(2) * 1))
+				this.orderGoodList.map(v => {
+					v.totalPrice = (v.buy_number * v.price).toFixed(2) * 1
+					v.image = this.imgPath + v.image
+				})
 				this.addressInfo = {
 					city: result.city,
 					district: result.district,

@@ -47,7 +47,7 @@
       }
     },
     computed: {
-      ...mapState(['forcedLogin', 'hasLogin']),
+      ...mapState(['forcedLogin', 'hasLogin', 'imgPath']),
       totalCount () {
         return this.goodList.map(v => v.num).reduce((a, b) => a + b, 0 )
       },
@@ -112,7 +112,7 @@
       handleGoodListData (data) {
         data.map(v => {
           v.num = 0
-          v.image = 'https://wx.mangguovvip.com' + v.image
+          v.image = this.imgPath + v.image
         })
         return data
       },

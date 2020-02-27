@@ -6,7 +6,7 @@
 				<view class="scroll-item-title-status">{{ status[good.status] }}</view>
 			</view>
 			<view class="scroll-item-info">
-				<image :src="good.image"></image>
+				<image src="/static/img/good.png"></image>
 				<view>
 					<view class="scroll-item-info-des">{{ good.goods_detail.map(v => `${v.title}x${v.buy_number}`).join('，') }}</view>
 					<view class="scroll-item-info-total">共计{{ good.goods_detail.map(v => v.buy_number).reduce((a, b) => a + b, 0) }}件商品合计<text>￥<text>{{ good.real_price }}</text></text></view>

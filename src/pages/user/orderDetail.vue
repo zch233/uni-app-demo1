@@ -82,7 +82,7 @@
 	export default {
 		components: { uniPopup, cancelPopup },
 		computed: {
-			...mapState(['globalInfo']),
+			...mapState(['globalInfo', 'imgPath']),
 		},
 		onLoad (e) {
 			this.getOrderInfo(e.id)
@@ -119,7 +119,10 @@
 				this.orderInfo = data.data.data[0]
 				this.orderGoodList = data.data.data[0].goods_detail
 				this.orderLog = data.data.data[0].order_log || []
-				this.orderGoodList.map(v => (v.totalPrice = (v.buy_number * v.price).toFixed(2) * 1))
+				this.orderGoodList.map(v => {
+					v.totalPrice = (v.buy_number * v.price).toFixed(2) * 1
+					v.image = this.imgPath + v.image
+				})
 				this.address = data.data.data[0].address
 			},
 			async confirmOrder () {

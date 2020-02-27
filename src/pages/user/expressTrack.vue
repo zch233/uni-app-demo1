@@ -47,8 +47,12 @@
 
 <script>
   import { getExpressTrack } from '@/api/user.js'
+  import { mapState } from 'vuex'
   
 	export default {
+    computed: {
+			...mapState(['globalInfo', 'imgPath']),
+		},
     data () {
       return {
         order_id: '',
@@ -100,7 +104,7 @@
 					return
 				}
         this.address = data.data.address
-        this.goodsList = data.data.goods_detail
+        this.goodsList = data.data.goods_detail.map(v => (v.image = this.imgPath + v.image) && v)
         this.expressTrack = data.data.express_route.map(v => v['@attributes']).reverse()
         this.mail_no = data.data.mail_no
       }

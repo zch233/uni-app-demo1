@@ -9,6 +9,7 @@ const store = new Vuex.Store({
 		/**
 		 * 是否需要强制登录
 		 */
+		imgPath: 'https://wx.mangguovvip.com',
 		forcedLogin: false,
 		tempLogin: false,
 		hasLogin: false,
