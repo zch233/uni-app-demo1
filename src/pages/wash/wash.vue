@@ -60,6 +60,9 @@
       this.getGoodList()
       this.getBanner()
     },
+    onPullDownRefresh() {
+      this.getGoodList('refresh')
+    },
     methods: {
       checkLoginStatus () {
 				if (!this.hasLogin) {
@@ -125,9 +128,6 @@
         } else if (operator === 'add') {
           product.num += 1
         }
-      },
-      onPullDownRefresh() {
-        this.getGoodList('refresh')
       },
       async settleOrder () {
         if (!this.checkLoginStatus()) return

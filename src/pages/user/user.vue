@@ -135,6 +135,9 @@
 				userCouponMore: false,
 			}
 		},
+		onPullDownRefresh() {
+			this.getUserInfo('refresh')
+		},
 		methods: {
 			...mapMutations(['updateUserVipInfo', 'updateUserIPhone']),
 			goToProfile () {
@@ -231,9 +234,7 @@
 					uni.showToast({ icon: 'none', title: '正在生成' })
 				}
 			},
-			onPullDownRefresh() {
-        this.getUserInfo('refresh')
-      },
+			
 		}
 	}
 </script>
