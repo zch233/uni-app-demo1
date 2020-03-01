@@ -239,6 +239,7 @@
     }
     &.collect.transparent {
       opacity: 0;
+      pointer-events: none;
     }
     image {
       width: 120rpx;
