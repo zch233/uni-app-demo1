@@ -136,7 +136,7 @@
 			}
 		},
 		onPullDownRefresh() {
-			this.getUserInfo('refresh')
+			this.freshPage()
 		},
 		methods: {
 			...mapMutations(['updateUserVipInfo', 'updateUserIPhone']),
@@ -205,10 +205,14 @@
 					this.disabledCouponList = list
 				}
 			},
-			async getUserInfo (refresh) {
+			async freshPage () {
+				await this.getUserInfo()
+				await this.getUserCoupon(2)
+				uni.stopPullDownRefresh()
+			},
+			async getUserInfo () {
 				uni.showLoading({ title: '加载中' });
 				const [error, { data }] = await getUserInfo()
-				if (refresh) uni.stopPullDownRefresh()
         uni.hideLoading();
         if (error) {
           uni.showToast({ icon: 'none', title: '获取失败' })
