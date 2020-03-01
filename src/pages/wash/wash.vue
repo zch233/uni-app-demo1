@@ -1,8 +1,20 @@
 <template>
 	<view class="content">
-		<swiper :indicator-dots="true">
-      <swiper-item v-for="item in bannerList" :key="item">
-        <image mode='widthFix' class="swiperImg" :src="'https://wx.mangguovvip.com' + item"></image>
+		<swiper :indicator-dots="true" v-if="bannerList.image1 || bannerList.image2 || bannerList.image3">
+      <swiper-item v-if="bannerList.image1">
+        <navigator :url="bannerList.url1">
+          <image mode='widthFix' class="swiperImg" :src="imgPath + bannerList.image1"></image>
+        </navigator>
+      </swiper-item>
+      <swiper-item v-if="bannerList.image2">
+        <navigator :url="bannerList.url2">
+          <image mode='widthFix' class="swiperImg" :src="imgPath + bannerList.image2"></image>
+        </navigator>
+      </swiper-item>
+      <swiper-item v-if="bannerList.image3">
+        <navigator :url="bannerList.url3">
+          <image mode='widthFix' class="swiperImg" :src="imgPath + bannerList.image3"></image>
+        </navigator>
       </swiper-item>
     </swiper>
     <view class="product-list">
@@ -43,7 +55,7 @@
     data () {
       return {
         goodList: [],
-        bannerList: [],
+        bannerList: {},
       }
     },
     computed: {

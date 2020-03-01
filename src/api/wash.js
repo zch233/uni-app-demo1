@@ -13,6 +13,6 @@ export function payNow (data) {
 }
 
 export function getBanner (data) {
-  return request('/collect/image_info', data)
+  return request('/collect/get_image', data)
 }
 
