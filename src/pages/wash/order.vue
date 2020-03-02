@@ -60,6 +60,7 @@
     </uni-popup>
 		<uni-popup ref="couponPopup" class="timePopup" type="bottom">
 			<scroll-view scroll-y class="couponList" scroll-with-animation>
+				<p v-if="couponList.length === 0" style="text-align:center;margin-top:3vh;color:#aaa;">您当前暂无可用优惠券</p>
 				<view class="couponList-item blue" v-for="item in couponList" :key="item" @tap="chooseCoupon(item)">
 					<view class="couponList-item-left">
 						<view class="couponList-item-left-price">￥<text>{{ item.coupon_price }}</text></view>
@@ -135,7 +136,7 @@
 			},
 			async getCouponList () {
 				uni.showLoading({ title: '加载中' });
-        const [error , { data }] = await getCouponList({ status: 1, type: 1, page_size: 999 })
+        const [error , { data }] = await getCouponList({ status: 2, type: 1, page_size: 999 })
         uni.hideLoading();
         if (error) {
           uni.showToast({ icon: 'none', title: '加载失败' })
@@ -174,6 +175,7 @@
 					mobile: result.mobile,
 					nickname: result.nickname,
 				}
+				this.couponInfo = { id: result.coupon_user_id, coupon_price: result.coupon_price }
 			},
 			chooseAddress () {
 				const _this = this
@@ -194,6 +196,7 @@
 				})
 			},
 			chooseCoupon (data) {
+				console.log(data, 'coupon')
 				this.couponInfo = data
 				this.$refs.couponPopup.close()
 			},

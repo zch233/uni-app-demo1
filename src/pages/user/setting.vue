@@ -1,6 +1,6 @@
 <template>
 	<view class="content">
-		<view class="settingItem">修改手机号</view>
+		<!-- <view class="settingItem">修改手机号</view> -->
 		<view class="settingItem" @tap="$refs.popup.open()">退出登陆</view>
 		<uniPopup ref="popup" :maskClick="false">
 			<view class="popupWrapper">

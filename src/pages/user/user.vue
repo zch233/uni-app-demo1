@@ -144,6 +144,7 @@
 				uni.navigateTo({ url: '/pages/user/profile' })
 			},
 			getDays(date1 , date2){
+				console.log(date1, date2)
 				let date1Str = date1.split("-");//将日期字符串分隔为数组,数组元素分别为年.月.日
 				//根据年 . 月 . 日的值创建Date对象
 				let date1Obj = new Date(date1Str[0],(date1Str[1]-1),date1Str[2]);
@@ -154,6 +155,7 @@
 				let dateTime = 1000*60*60*24; //每一天的毫秒数
 				let minusDays = Math.floor(((t2-t1)/dateTime));//计算出两个日期的天数差
 				let days = Math.abs(minusDays);//取绝对值
+				console.log(days)
 				return days;
 			},
 			time (temp) {
@@ -225,7 +227,21 @@
 				this.userInfo = data.data.user_info
 				this.updateUserVipInfo(data.data.user_info)
 				this.updateUserIPhone(data.data.user_info.mobile)
-        this.orderInfo = data.data.order_count
+				this.orderInfo = data.data.order_count
+				if (!data.data.user_info.mobile) {
+					uni.showModal({
+						title: '未验证手机号',
+						content: '您未绑定手机号，需要绑定才能享受更多功能',
+						showCancel: !this.forcedLogin,
+						success: (res) => {
+							if (res.confirm) {
+								uni.navigateTo({
+									url: '/pages/user/profile'
+								});
+							}
+						}
+					});
+				}
 			},
 			async getCouponMore () {
 				await this.getUserCoupon(34)
