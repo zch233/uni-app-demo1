@@ -235,6 +235,21 @@
 					signType: data.data.jsApiParameters.signType,
 					paySign: data.data.jsApiParameters.paySign,
 					success: function (res) {
+						// uni.getSetting({
+						// 	success(res) {
+						// 		if (res.authSetting) {
+						// 			uni.requestSubscribeMessage({
+						// 				tmplIds: [''],
+						// 				success (res) {
+						// 					console.log(res, 1111)
+						// 				},
+						// 				fail (err) {
+						// 					console.log(err, 22)
+						// 				}
+						// 			})
+						// 		}
+						// 	}
+						// });
 						uni.redirectTo({ url: `/pages/wash/paySuccess?id=${_this.orderInfo.id}&success=true` })
 					},
 					fail: function (err) {
