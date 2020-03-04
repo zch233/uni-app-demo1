@@ -247,7 +247,7 @@
 			},
 			useUserCoupon (item) {
 				if (item.type === 1) {
-					uni.navigateTo({ url: '/pages/wash/wash' })
+					uni.switchTab({ url: '/pages/wash/wash' })
 				} else if (item.type === 2) {
 					uni.showToast({ icon: 'none', title: '正在生成' })
 				}

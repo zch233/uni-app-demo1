@@ -61,7 +61,7 @@
 		<uni-popup ref="couponPopup" class="timePopup" type="bottom">
 			<scroll-view scroll-y class="couponList" scroll-with-animation>
 				<p v-if="couponList.length === 0" style="text-align:center;margin-top:3vh;color:#aaa;">您当前暂无可用优惠券</p>
-				<view class="couponList-item blue" v-for="item in couponList" :key="item" @tap="chooseCoupon(item)">
+				<view class="couponList-item blue" v-for="item in couponList" :key="item.id" @tap="chooseCoupon(item)">
 					<view class="couponList-item-left">
 						<view class="couponList-item-left-price">￥<text>{{ item.coupon_price }}</text></view>
 						<view class="couponList-item-left-tips">满{{ item.condition }}元可用</view>
@@ -122,7 +122,7 @@
 			getToday () {
 				const date = new Date()
 				const today = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate() + this.leftTimeIndex) + ' ' + this.rightTime[this.rightTimeIndex]
-				return new Date(today).getTime()
+				return new Date(today.replace(/-/g, '/')).getTime() / 1000
 			},
 			showTimeOption () {
 				this.$refs.timePopup.open()
@@ -142,10 +142,10 @@
           uni.showToast({ icon: 'none', title: '加载失败' })
           return
 				}
-				this.couponList = data.data.data
-				this.couponList.map(v => {
+				this.couponList = data.data.data.filter(v => this.orderInfo.total_price * 1 >= v.condition * 1).map(v => {
 					v.coupon_start_time = this.time(v.coupon_start * 1000).split(' ')[0].replace(/\-/g, '.')
 					v.coupon_end_time = this.time(v.coupon_end * 1000).split(' ')[0].replace(/\-/g, '.')
+					return v
 				})
 			},
 			time (time = +new Date()) {
@@ -189,9 +189,6 @@
 							mobile: result.telNumber,
 							nickname: result.userName,
 						}
-					},
-					fail() {
-						uni.showToast({ icon: 'none', title: '获取地址失败' })
 					}
 				})
 			},
@@ -223,7 +220,7 @@
           return
 				}
 				if (data.code !== 'success') {
-					uni.showToast({ icon: 'none', title: data.msg })
+					uni.showToast({ icon: 'none', title: data.msg || JSON.stringify(data) })
 					return
 				}
 				const _this = this

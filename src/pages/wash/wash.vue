@@ -111,7 +111,7 @@
       },
       async getGoodList (refresh) {
         uni.showLoading({ title: '正在获取商品' });
-        const [error, { data }] = await getGoodList()
+        const [error, { data }] = await getGoodList({ page_size: 999 })
         uni.hideLoading();
         if (refresh) uni.stopPullDownRefresh()
         if (error) {
@@ -205,11 +205,11 @@
           display: inline-flex;
           font-size: 30rpx;
           align-items: center;
-          $r: 30rpx;
+          $r: 36rpx;
           text-align: center;
           font-weight: bold;
           &-minus {
-            width: 30rpx;
+            width: $r;
           }
           &-count {
             color:#333;
@@ -218,7 +218,7 @@
             text-align: center;
           }
           &-add {
-            width: 30rpx;
+            width: $r;
           }
         }
       }
