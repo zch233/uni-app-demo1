@@ -1,19 +1,9 @@
 <template>
 	<view class="content">
-		<swiper :indicator-dots="true" v-if="bannerList.image1 || bannerList.image2 || bannerList.image3">
-      <swiper-item v-if="bannerList.image1">
-        <navigator :url="bannerList.url1">
-          <image mode='widthFix' class="swiperImg" :src="imgPath + bannerList.image1"></image>
-        </navigator>
-      </swiper-item>
-      <swiper-item v-if="bannerList.image2">
-        <navigator :url="bannerList.url2">
-          <image mode='widthFix' class="swiperImg" :src="imgPath + bannerList.image2"></image>
-        </navigator>
-      </swiper-item>
-      <swiper-item v-if="bannerList.image3">
-        <navigator :url="bannerList.url3">
-          <image mode='widthFix' class="swiperImg" :src="imgPath + bannerList.image3"></image>
+		<swiper :indicator-dots="true" v-if="bannerList.length !== 0">
+      <swiper-item v-for="(item, index) in bannerList" :key="index">
+        <navigator :url="item[1]">
+          <image mode='widthFix' class="swiperImg" :src="imgPath + item[0]"></image>
         </navigator>
       </swiper-item>
     </swiper>
@@ -55,7 +45,7 @@
     data () {
       return {
         goodList: [],
-        bannerList: {},
+        bannerList: [],
       }
     },
     computed: {
@@ -106,8 +96,8 @@
         if (data.code !== 'success') {
 					uni.showToast({ icon: 'none', title: data.msg })
 					return
-				}
-        this.bannerList = data.data
+        }
+        this.bannerList = (data.data.image || []).filter(v => v[0])
       },
       async getGoodList (refresh) {
         uni.showLoading({ title: '正在获取商品' });
