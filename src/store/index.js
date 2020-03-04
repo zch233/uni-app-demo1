@@ -53,6 +53,9 @@ const store = new Vuex.Store({
 		},
 		upgradeVip (state) {
 			state.userVip = true;
+		},
+		autoLogin (state) {
+			state.hasLogin = true;
 		}
 	},
 	actions: {
@@ -60,6 +63,11 @@ const store = new Vuex.Store({
 			return new Promise(async (resolve, reject) => {
 				commit('upgradeVip')
 				resolve()
+      })
+		},
+		autoLogin ({ commit }) {
+			return new Promise(async (resolve, reject) => {
+				commit('autoLogin')
       })
 		},
 		login({commit}, { code, invite_uid }) {

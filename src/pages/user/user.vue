@@ -169,7 +169,6 @@
 					success: async ({ userInfo }) => {
 						_this.$store.dispatch('updateUserInfo', userInfo).then(() => {
 							_this.getUserInfo()
-							uni.showToast({ icon: 'none', title: '登陆成功' })
 						}).catch((err) => {
 							uni.showToast({ icon: 'none', title: '更新失败' })
 						}).finally(() => {
