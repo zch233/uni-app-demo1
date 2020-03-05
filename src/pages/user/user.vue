@@ -241,8 +241,12 @@
 				}
 			},
 			async getCouponMore () {
-				await this.getUserCoupon(34)
-				this.userCouponMore = true
+				if (this.userCouponMore) {
+					this.disabledCouponList = []
+				} else {
+					await this.getUserCoupon(34)
+				}
+				this.userCouponMore = !this.userCouponMore
 			},
 			useUserCoupon (item) {
 				if (item.type === 1) {
