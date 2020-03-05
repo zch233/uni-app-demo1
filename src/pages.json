@@ -59,7 +59,7 @@
 		{
 			"path": "pages/user/message",
 			"style": {
-				"navigationBarTitleText": "消息推送"
+				"navigationBarTitleText": "系统消息"
 			}
 		},
 		{
@@ -103,7 +103,7 @@
 		"list": [
 			{
 				"name": "test",
-				"path": "pages/user/expressTrack"
+				"path": "pages/user/message"
 			}
 		]
 	},
