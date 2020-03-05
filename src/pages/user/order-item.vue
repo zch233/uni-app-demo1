@@ -89,7 +89,7 @@
 			/*上拉加载的回调: 其中page.num:当前页 从1开始, page.size:每页数据条数,默认10 */
 			async upCallback(page) {
 				//联网加载数据
-				const [error, { data }] = await getOrderList({ page_size: page.size, current_page: page.num, status: this.status })
+				const [error, { data }] = await getOrderList({ page_size: page.size, page: page.num, status: this.status })
 				if (error) {
 					this.mescroll.endErr();
 					return

@@ -94,6 +94,11 @@
 			账户设置
 			<image mode='widthFix' src="/static/img/right.png"></image>
 		</navigator>
+		<navigator url="/pages/user/message" class="userSetting messageSetting">
+			消息推送
+			<view class="messageSetting-tips" v-if="messageList.length">{{ messageList.length }}</view>
+			<image mode='widthFix' src="/static/img/right.png"></image>
+		</navigator>
 		<uniPopup ref="popup" :maskClick="false">
 			<view class="couponWrapper">
 				<view class="couponWrapper-title">门店抵用券<image @tap="$refs.popup.close()" mode='widthFix' src="/static/img/close.png"></image></view>
@@ -107,7 +112,7 @@
 </template>
 
 <script>
-	import { login, updateUserInfo, getUserInfo, getCouponList } from '@/api/user.js'
+	import { login, updateUserInfo, getUserInfo, getCouponList, getMessageList } from '@/api/user.js'
 	import { mapState, mapMutations } from 'vuex'
 	import uniPopup from 'components/uni-popup/uni-popup.vue'
 
@@ -125,11 +130,13 @@
 		onLoad () {
 			this.getWxUserInfo()
 			this.getUserCoupon(2)
+			this.getMessageList()
 		},
 		data () {
 			return {
 				couponList: [],
 				disabledCouponList: [],
+				messageList: [],
 				userInfo: {},
 				orderInfo: {},
 				userCouponMore: false,
@@ -247,6 +254,20 @@
 					await this.getUserCoupon(34)
 				}
 				this.userCouponMore = !this.userCouponMore
+			},
+			async getMessageList () {
+				uni.showLoading({ title: '加载中' });
+				const [error, { data }] = await getMessageList({ status: 1, page_size: 999 })
+        uni.hideLoading();
+        if (error) {
+          uni.showToast({ icon: 'none', title: '获取失败' })
+          return
+				}
+				if (data.code !== 'success') {
+					uni.showToast({ icon: 'none', title: data.msg })
+					return
+				}
+				this.messageList = data.data.data
 			},
 			useUserCoupon (item) {
 				if (item.type === 1) {
@@ -584,6 +605,25 @@
 	padding: 38rpx 0;
 	image {
 		width: 18rpx;
+	}
+}
+.messageSetting {
+	border-top: 2rpx solid #f2f2f2;
+	position: relative;
+	&-tips {
+		position: absolute;
+		$r: 30rpx;
+		width: $r;
+		height: $r;
+		line-height: $r;
+		text-align: center;
+		border-radius: 50%;
+		background-color: rgb(242, 32, 97);
+		top: 50%;
+		transform: translateY(-50%);
+		right: 10%;
+		color: #fff;
+		font-size: 22rpx;
 	}
 }
 .couponWrapper {

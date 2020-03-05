@@ -57,6 +57,12 @@
 			}
 		},
 		{
+			"path": "pages/user/message",
+			"style": {
+				"navigationBarTitleText": "消息推送"
+			}
+		},
+		{
 			"path": "pages/user/order",
 			"style": {
 				"navigationBarTitleText": "我的订单",

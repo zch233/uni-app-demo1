@@ -51,3 +51,7 @@ export function decrypt (data) {
 export function getExpressTrack (data) {
   return request('/collect/get_sf_route', data)
 }
+
+export function getMessageList (data) {
+  return request('/collect/get_message', data)
+}

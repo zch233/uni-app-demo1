@@ -122,6 +122,9 @@
 		methods: {
 			init ({ invite_uid }) {
 				this.checkLogin(invite_uid)
+				if (this.hasLogin) {
+					this.getShareCoupon()
+				}
 			},
 			goToVipPay () {
 				if (!this.checkLogin()) return
@@ -145,6 +148,7 @@
 									success(res) {
 										if (res.authSetting['scope.userInfo']) {
 											_this.$store.dispatch('autoLogin')
+											_this.getShareCoupon()
 										} else {
 											uni.showModal({
 												title: '未登录',
@@ -173,7 +177,6 @@
 					});
 					return false
 				} else {
-					this.getShareCoupon()
 					return true
 				}
 			},
