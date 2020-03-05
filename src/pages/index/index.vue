@@ -21,18 +21,18 @@
 			<view class="vipContent-coupon-item-wrapper">
 				<view class="vipContent-coupon-item">
 					<view class="vipContent-coupon-item-title">门店抵用券</view>
-					<view class="vipContent-coupon-item-price">￥200</view>
-					<view class="vipContent-coupon-item-info">满699元可使用</view>
+					<view class="vipContent-coupon-item-price">￥{{ globalInfo.shop_coupon.value }}</view>
+					<!-- <view class="vipContent-coupon-item-info">满699元可使用</view> -->
 				</view>
-				<view class="vipContent-coupon-item-tips">全年最高可领2400元</view>
+				<view class="vipContent-coupon-item-tips">全年最高可领{{ globalInfo.shop_coupon_year.value }}元</view>
 			</view>
 			<view class="vipContent-coupon-item-wrapper">
 				<view class="vipContent-coupon-item">
 					<view class="vipContent-coupon-item-title">洗涤抵用券</view>
-					<view class="vipContent-coupon-item-price">￥100</view>
-					<view class="vipContent-coupon-item-info">满1元可使用</view>
+					<view class="vipContent-coupon-item-price">￥{{ globalInfo.wash_coupon.value }}</view>
+					<!-- <view class="vipContent-coupon-item-info">满1元可使用</view> -->
 				</view>
-				<view class="vipContent-coupon-item-tips">全年最高可领1200元</view>
+				<view class="vipContent-coupon-item-tips">全年最高可领{{ globalInfo.wash_coupon_year.value }}元</view>
 			</view>
 		</view>
 		<view class="vipContent-title"><text>专属会员特权</text></view>
@@ -115,7 +115,7 @@
 				title: 'zch'
 			}
 		},
-		computed: mapState(['forcedLogin', 'hasLogin', 'userName']),
+		computed: mapState(['forcedLogin', 'hasLogin', 'userName', 'globalInfo']),
 		onLoad(e) {
 			this.init(e)
 		},
@@ -405,6 +405,7 @@
 		margin: 20rpx 0;
 		line-height: 1;
 		background: linear-gradient(88deg,rgba(228,208,171,1) 0%, rgba(184,150,88,1) 50.78125%, rgba(223,202,164,1) 100%);
+		background-clip: text;
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 	}
@@ -491,7 +492,7 @@
 	.vipContent-coupon-item-price {
 		font-size: 50rpx;
 		font-weight: bold;
-		margin: 18rpx 0 6rpx;
+		margin: 24rpx 0 16rpx;
 		padding-right: .1em;
 	}
 	.vipContent-coupon-item-info {

@@ -19,7 +19,7 @@ const store = new Vuex.Store({
 		userPhone: '',
 		userInfo: {},
 		userVipInfo: {},
-		globalInfo: [],
+		globalInfo: {},
 	},
 	mutations: {
 		login(state, data) {
