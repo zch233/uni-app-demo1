@@ -6,12 +6,12 @@
     <view class="messageList-item" v-for="item in messageList" :key="item.id" :class="{ disabled: item.status === 2 }" @tap="viewMessage(item)">
       <view class="messageList-item-title">{{ item.created_time }}</view>
       <view class="messageList-item-content">
-        <view class="messageList-item-content-top">{{ item.created_time }}</view>
+        <view class="messageList-item-content-top">{{ item.order_id }}</view>
         <view class="messageList-item-content-bottom">
           <view class="messageList-item-content-bottom-status">{{ item.message }}</view>
           <view class="messageList-item-content-bottom-good">
             <image mode='widthFix' src="/static/img/good.png"></image>
-            <text>上衣×2，鞋子×1，裤子×1，普通外套×1， 皮革外套×1</text>
+            <text>{{ item.goods_detail.map(v => `${v.title}x${v.buy_number}`).join('，') }}</text>
           </view>
         </view>
       </view>
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-  import { getMessageList } from '@/api/user.js'
+  import { getMessageList, viewMessage } from '@/api/user.js'
 
 	export default {
     data () {
@@ -34,7 +34,7 @@
     methods: {
       async getMessageList () {
 				uni.showLoading({ title: '加载中' });
-				const [error, { data }] = await getMessageList({ status: 1, page_size: 999 })
+				const [error, { data }] = await getMessageList({ page_size: 999 })
         uni.hideLoading();
         if (error) {
           uni.showToast({ icon: 'none', title: '获取失败' })
@@ -46,7 +46,11 @@
 				}
 				this.messageList = data.data.data
       },
-      async viewMessage () {}
+      async viewMessage (message) {
+        if (message.status === 2) return
+        await viewMessage({ id: message.id })
+        message.status = 2
+      }
     }
   }
 </script>

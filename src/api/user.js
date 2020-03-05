@@ -55,3 +55,7 @@ export function getExpressTrack (data) {
 export function getMessageList (data) {
   return request('/collect/get_message', data)
 }
+
+export function viewMessage (data) {
+  return request('/collect/edit_message', data)
+}
