@@ -411,6 +411,7 @@
 	width: 92%;
 	background-color: #fff;
 	margin: 30rpx auto;
+	z-index: 1;
 	box-sizing: border-box;
 }
 .footer {
