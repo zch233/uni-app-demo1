@@ -212,9 +212,21 @@
 				}
 			},
 			async freshPage () {
-				await this.getUserInfo()
-				await this.getUserCoupon(2)
-				uni.stopPullDownRefresh()
+				const p1 = () => new Promise(async (reslove) => {
+					await this.getUserInfo()
+					reslove()
+				})
+				const p2 = () => new Promise(async (reslove) => {
+					await this.getUserCoupon(2)
+					reslove()
+				})
+				const p3 = () => new Promise(async (reslove) => {
+					await this.getMessageList()
+					reslove()
+				})
+				Promise.all([p1(), p2(), p3()]).then(() => {
+					uni.stopPullDownRefresh()
+				})
 			},
 			async getUserInfo () {
 				uni.showLoading({ title: '加载中' });
