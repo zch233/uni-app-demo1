@@ -58,7 +58,7 @@
 				</scroll-view>
 			</view>
     </uni-popup>
-		<uni-popup ref="couponPopup" class="timePopup" type="bottom">
+		<uni-popup ref="couponPopup" class="couponPopup" type="bottom">
 			<scroll-view scroll-y class="couponList" scroll-with-animation>
 				<p v-if="couponList.length === 0" style="text-align:center;margin-top:3vh;color:#aaa;">您当前暂无可用优惠券</p>
 				<view class="couponList-item blue" v-for="item in couponList" :key="item.id" @tap="chooseCoupon(item)">
@@ -247,10 +247,10 @@
 						// 		}
 						// 	}
 						// });
-						uni.redirectTo({ url: `/pages/wash/paySuccess?id=${_this.orderInfo.id}&success=true` })
+						uni.reLaunch({ url: `/pages/wash/paySuccess?id=${_this.orderInfo.id}&success=true` })
 					},
 					fail: function (err) {
-						uni.redirectTo({ url: `/pages/wash/paySuccess?id=${_this.orderInfo.id}&success=false` })
+						uni.reLaunch({ url: `/pages/wash/paySuccess?id=${_this.orderInfo.id}&success=false` })
 					},
 					cancel: function (err) {
 						uni.showToast({ icon: 'none', title: '已取消支付' })
@@ -411,8 +411,9 @@
 	width: 92%;
 	background-color: #fff;
 	margin: 30rpx auto;
-	z-index: 1;
+	z-index: 0;
 	box-sizing: border-box;
+	position: static;
 }
 .footer {
 	position: fixed;
@@ -567,5 +568,8 @@
 	&-item.disabled &-item-right {
 		background-color: #DBDBDB;
 	}
+}
+.couponPopup {
+	z-index: 999;
 }
 </style>
