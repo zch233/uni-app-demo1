@@ -101,11 +101,13 @@
 		</navigator>
 		<uniPopup ref="popup" :maskClick="false">
 			<view class="couponWrapper">
-				<view class="couponWrapper-title">门店抵用券<image @tap="$refs.popup.close()" mode='widthFix' src="/static/img/close.png"></image></view>
-				<view class="couponWrapper-time">有效期至：2020/3/31</view>
-				<view class="couponWrapper-price"><text>300</text>元优惠券</view>
+				<view class="couponWrapper-title">{{ currrntCouponInfo.coupon_name }}<image @tap="$refs.popup.close()" mode='widthFix' src="/static/img/close.png"></image></view>
+				<view class="couponWrapper-time">有效期至：{{ currentCoupon_time }}</view>
+				<view class="couponWrapper-price"><text>{{ currrntCouponInfo.coupon_price }}</text>元优惠券</view>
 				<view class="couponWrapper-tips">商家扫描条形码使用</view>
-				<image class="couponWrapper-code" mode='widthFix' src="/static/img/testCode.png"></image>
+				<canvas style="width: 300rpx; height: 300rpx; margin: 0 auto;" canvas-id="qrcode"></canvas>
+				<canvas style="width: 520rpx; height: 114rpx; margin: 0 auto;" canvas-id="barcode"></canvas>
+				<view class="couponWrapper-code">{{ currrntCouponInfo.code }}</view>
 			</view>
 		</uniPopup>
 	</view>
@@ -115,7 +117,8 @@
 	import { login, updateUserInfo, getUserInfo, getCouponList, getMessageList } from '@/api/user.js'
 	import { mapState, mapMutations } from 'vuex'
 	import uniPopup from 'components/uni-popup/uni-popup.vue'
-
+	import wxbarcode from 'wxbarcode'
+	
 	export default {
 		components: { uniPopup },
 		computed: {
@@ -125,6 +128,9 @@
 			},
 			twoDateDays () {
 				return this.getDays(this.userInfoMember_time, this.time().split(' ')[0])
+			},
+			currentCoupon_time () {
+				return this.time(this.currrntCouponInfo.expire_time * 1000).split(' ')[0]
 			}
 		},
 		onLoad () {
@@ -139,7 +145,10 @@
 				messageList: [],
 				userInfo: {},
 				orderInfo: {},
+				currrntCouponInfo: {},
 				userCouponMore: false,
+				qrcodeURL: '',
+				codeURL: '',
 			}
 		},
 		onPullDownRefresh() {
@@ -285,10 +294,14 @@
 				if (item.type === 1) {
 					uni.switchTab({ url: '/pages/wash/wash' })
 				} else if (item.type === 2) {
-					uni.showToast({ icon: 'none', title: '正在生成' })
+					uni.showLoading({ title: '加载中' });
+					wxbarcode.barcode('barcode', item.code, 520, 114);
+					wxbarcode.qrcode('qrcode', item.code, 300, 300);
+					this.currrntCouponInfo = item
+					this.$refs.popup.open()
+					uni.hideLoading();
 				}
 			},
-			
 		}
 	}
 </script>
@@ -548,7 +561,8 @@
 			color: #F22061;
 			font-size: 24rpx;
 			text-align: center;
-			padding: 12rpx 40rpx;
+			padding: 12rpx 0;
+			width: 220rpx;
 			border-right: 4rpx dashed #bbb;
 			&-price {
 				font-weight: bold;
@@ -681,7 +695,10 @@
 		margin-bottom: 22rpx;
 	}
 	&-code {
-		width: 520rpx;
+		text-align: center;
+		margin-top: 22rpx;
+		letter-spacing: .5em;
+		margin-bottom: 24rpx;
 	}
 }
 </style>
