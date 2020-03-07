@@ -613,7 +613,7 @@
 		background-size: 100%;
 		top: 50%;
 		right: 50%;
-		transform: translate(-50%);
+		transform: translateY(-50%);
 	}
 	&-item.disabled &-item-right.used::before {
 		background-image: url('~@/static/img/userCouopnDisabled-used.png');

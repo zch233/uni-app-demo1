@@ -68,6 +68,7 @@ const store = new Vuex.Store({
 		autoLogin ({ commit }) {
 			return new Promise(async (resolve, reject) => {
 				commit('autoLogin')
+				resolve()
       })
 		},
 		login({commit}, { code, invite_uid }) {
