@@ -98,7 +98,7 @@
 			</view>
 			<view @click="$refs.popup.close()" class="content-couponButton">确认</view>
 		</uniPopup>
-		<canvas canvas-id="shareCanvas" style="position:absolute;width:750px;height:1798px;z-index:-1;top:0;left:0;transform:scale(0.01);"></canvas>
+		<canvas v-show="shareCanvasVisible" canvas-id="shareCanvas" style="position:absolute;width:750px;height:1798px;z-index:-1;top:0;left:0;transform:scale(0.01);"></canvas>
 	</view>
 </template>
 
@@ -112,7 +112,8 @@
 		data () {
 			return {
 				couponList: [],
-				title: 'zch'
+				title: 'zch',
+				shareCanvasVisible: true,
 			}
 		},
 		computed: mapState(['forcedLogin', 'hasLogin', 'userName', 'globalInfo']),
@@ -213,9 +214,11 @@
 			},
 			async save () {
 				if (!this.checkLogin()) return
+				this.shareCanvasVisible = true
 				uni.showLoading({ title: '正在生成海报' });
 				const img = await this.getQRCode({ type: 2 })
 				const aa = wx.getFileSystemManager();
+				const _this = this
 				aa.writeFile({
 					filePath: `${wx.env.USER_DATA_PATH}/qrcode.png`,
 					data: img.slice(22),
@@ -239,6 +242,7 @@
 										success: (res) => {
 											uni.hideLoading();
 											uni.showToast({ title: '保存成功' })
+											_this.shareCanvasVisible = false
 										},
 										fail: (err) => {
 											console.log(err)
