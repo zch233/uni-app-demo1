@@ -95,13 +95,14 @@
 		computed: {
 			...mapState(['imgPath']),
 			totalPrice() {
-				const price = this.orderInfo.real_price - (this.couponInfo.coupon_price || 0)
+				const price = this.orderInfo.total_price - (this.couponInfo.coupon_price || 0)
 				return price < 0 ? 0.01 : (price.toFixed(2) * 1)
 			}
 		},
 		data () {
 			return {
 				orderGoodList: [],
+				originCouponList: [],
 				couponList: [],
 				addressInfo: {},
 				remark: '',
@@ -132,7 +133,8 @@
 			showCouponOption () {
 				this.$refs.couponPopup.open()
 				this.textareaVisible = false
-				this.couponList.length <= 0 && this.getCouponList()
+				this.couponList = this.originCouponList.filter(v => v.id !== this.couponInfo.id)
+				this.originCouponList.length <= 0 && this.getCouponList()
 			},
 			bindTextAreaBlur (e) {
 				this.remark = e.detail.value
@@ -145,11 +147,12 @@
           uni.showToast({ icon: 'none', title: '加载失败' })
           return
 				}
-				this.couponList = data.data.data.filter(v => this.orderInfo.total_price * 1 >= v.condition * 1).map(v => {
+				this.originCouponList = data.data.data.filter(v => this.orderInfo.total_price * 1 >= v.condition * 1).map(v => {
 					v.coupon_start_time = this.time(v.coupon_start * 1000).split(' ')[0].replace(/\-/g, '.')
 					v.coupon_end_time = this.time(v.coupon_end * 1000).split(' ')[0].replace(/\-/g, '.')
 					return v
 				})
+				this.couponList = this.originCouponList.filter(v => v.id !== this.couponInfo.id)
 			},
 			time (time = +new Date()) {
 				let date = new Date(time + 8 * 3600 * 1000); // 增加8小时
@@ -237,21 +240,6 @@
 					signType: data.data.jsApiParameters.signType,
 					paySign: data.data.jsApiParameters.paySign,
 					success: function (res) {
-						// uni.getSetting({
-						// 	success(res) {
-						// 		if (res.authSetting) {
-						// 			uni.requestSubscribeMessage({
-						// 				tmplIds: [''],
-						// 				success (res) {
-						// 					console.log(res, 1111)
-						// 				},
-						// 				fail (err) {
-						// 					console.log(err, 22)
-						// 				}
-						// 			})
-						// 		}
-						// 	}
-						// });
 						uni.reLaunch({ url: `/pages/wash/paySuccess?id=${_this.orderInfo.id}&success=true` })
 					},
 					fail: function (err) {
@@ -512,6 +500,7 @@
 	height: 100vh;
 	background-color: #fff;
 	box-sizing: border-box;
+	padding-bottom: 110rpx;
 	.couponNotUse {
 		position: fixed;
 		bottom: 0;
@@ -520,6 +509,7 @@
 		font-size: 30rpx;
 		text-align: center;
 		line-height: 100rpx;
+		background-color: #fff;
 		box-shadow: 0 0 10rpx 0 rgba(0, 0, 0, .1);
 	}
 	&-item {
@@ -535,7 +525,8 @@
 			color: #F22061;
 			font-size: 24rpx;
 			text-align: center;
-			padding: 12rpx 40rpx;
+			padding: 12rpx 0;
+			width: 250rpx;
 			border-right: 4rpx dashed #bbb;
 			&-price {
 				font-weight: bold;
