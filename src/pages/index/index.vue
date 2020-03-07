@@ -330,10 +330,11 @@
 				background-repeat: no-repeat;
 				background-size: 100%;
 				&-left {
-					padding: 56rpx 12rpx 58rpx 0;
+					padding: 56rpx 0;
 					color: #7D582C;
 					font-size: 30rpx;
 					text-align: center;
+					width: 180rpx;
 					&-price {
 						color: #DCB17E;
 						font-size: 50rpx;
@@ -346,8 +347,14 @@
 					}
 				}
 				&-right {
-					padding-left: 16rpx;
+					flex: 1;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+					overflow: hidden;
 					&-title {
+						text-overflow: ellipsis;
+						white-space: nowrap;
+						overflow: hidden;
 						font-size: 36rpx;
 						color: #7D582C;
 						margin-top: 16rpx;

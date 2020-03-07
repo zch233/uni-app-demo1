@@ -42,7 +42,7 @@
 				<text class="details-finall-label">小计：</text>￥<text class="details-finall-value">{{ totalPrice }}</text>
 			</view>
 		</view>
-		<textarea class="remark" @blur="bindTextAreaBlur" placeholder-style="color:#BFBFBF" placeholder="备注"/>
+		<textarea v-show="textareaVisible" class="remark" @blur="bindTextAreaBlur" placeholder-style="color:#BFBFBF" placeholder="备注"/>
 		<view class="footer">
 			<view class="footer-price"><text>¥{{ totalPrice }}</text>已优惠¥{{ couponInfo.coupon_price || 0 }}</view>
 			<view class="footer-button" @tap="payNow">确认支付</view>
@@ -113,6 +113,7 @@
 				rightTime: nowRightTime,
 				rightTimeIndex: 0,
 				orderTime: nowRightTime[0],
+				textareaVisible: true,
 			}
 		},
 		onLoad (e) {
@@ -126,9 +127,11 @@
 			},
 			showTimeOption () {
 				this.$refs.timePopup.open()
+				this.textareaVisible = false
 			},
 			showCouponOption () {
 				this.$refs.couponPopup.open()
+				this.textareaVisible = false
 				this.couponList.length <= 0 && this.getCouponList()
 			},
 			bindTextAreaBlur (e) {
@@ -194,6 +197,7 @@
 			},
 			chooseCoupon (data) {
 				console.log(data, 'coupon')
+				this.textareaVisible = true
 				this.couponInfo = data
 				this.$refs.couponPopup.close()
 			},
@@ -203,6 +207,7 @@
 				this.rightTimeIndex = 0
 			},
 			selectRightTime (index) {
+				this.textareaVisible = true
 				this.rightTimeIndex = index
 				this.orderTime = (this.leftTimeIndex === 0 ? '' : this.leftTime[this.leftTimeIndex]) + this.rightTime[this.rightTimeIndex]
 				this.$refs.timePopup.close()
