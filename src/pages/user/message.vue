@@ -16,6 +16,7 @@
         </view>
       </view>
     </view>
+    <view v-if="end" class="messageList-end">已经到底啦~</view>
   </view>
 </template>
 
@@ -26,16 +27,29 @@
     data () {
       return {
         messageList: [],
+        page: 1,
+        end: false
       }
     },
     onLoad () {
       this.getMessageList()
     },
+    onPullDownRefresh() {
+      this.page = 1
+      this.messageList = []
+			this.getMessageList('refresh')
+		},
+    async onReachBottom () {
+      if (end) return
+      this.page += 1
+      const data = await this.getMessageList()
+    },
     methods: {
-      async getMessageList () {
+      async getMessageList (refresh) {
 				uni.showLoading({ title: '加载中' });
-				const [error, { data }] = await getMessageList({ page_size: 999 })
+				const [error, { data }] = await getMessageList({ status: 'all',page_size: 10, page: this.page })
         uni.hideLoading();
+        if (refresh) uni.stopPullDownRefresh()
         if (error) {
           uni.showToast({ icon: 'none', title: '获取失败' })
           return
@@ -43,8 +57,12 @@
 				if (data.code !== 'success') {
 					uni.showToast({ icon: 'none', title: data.msg })
 					return
-				}
-				this.messageList = data.data.data
+        }
+        this.messageList = this.messageList.concat(data.data.data)
+        if (data.data.total_num < data.data.page_size * 10) {
+          this.end = true
+        }
+        return data.data
       },
       async viewMessage (message) {
         if (message.status === 2) return
@@ -66,6 +84,12 @@
       font-size: 36rpx;
       color: #999;
       padding-top: 7vh;
+    }
+    &-end {
+      text-align: center;
+      font-size: 30rpx;
+      color: #999;
+      padding: 1em 0;
     }
     &-item {
       color: #333333;
