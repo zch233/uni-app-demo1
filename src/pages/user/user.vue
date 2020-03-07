@@ -78,7 +78,7 @@
 			<view class="userCoupon-more">
 				<image mode='widthFix' @tap="getCouponMore" :class="{userCouponMoreImg: userCouponMore}" src="/static/img/userCouponMore.png"></image>
 			</view>
-			<view class="userCoupon-item disabled" v-for="item in disabledCouponList" :key="item">
+			<view class="userCoupon-item disabled" v-for="item in disabledCouponList" :key="item.id">
 				<view class="userCoupon-item-left">
 					<view class="userCoupon-item-left-price">￥<text>{{ item.coupon_price }}</text></view>
 					<view class="userCoupon-item-left-tips">满{{ item.condition }}元可用</view>
