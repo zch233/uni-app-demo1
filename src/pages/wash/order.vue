@@ -131,6 +131,10 @@
 				this.textareaVisible = false
 			},
 			showCouponOption () {
+				if (this.orderInfo.pay_type === 1) {
+					uni.showToast({ icon: 'none', title: '本单暂不支持 使用/更换' })
+					return
+				}
 				this.$refs.couponPopup.open()
 				this.textareaVisible = false
 				this.couponList = this.originCouponList.filter(v => v.id !== this.couponInfo.id)
@@ -185,15 +189,31 @@
 			},
 			chooseAddress () {
 				const _this = this
-				uni.chooseAddress({
-					success(result) {
-						_this.addressInfo = {
-							city: result.cityName,
-							district: result.countyName,
-							address: result.detailInfo,
-							province: result.provinceName,
-							mobile: result.telNumber,
-							nickname: result.userName,
+				uni.getSetting({
+					success (setting) {
+						if (setting.authSetting['scope.address'] === false) { // maybe undefined
+							uni.showModal({
+								title: '提示',
+								content: '检测到您没有打开地址权限，是否去设置开启？',
+								success: (res) => {
+									if (res.confirm) {
+										uni.openSetting()
+									}
+								}
+							});
+						} else {
+							uni.chooseAddress({
+								success(result) {
+									_this.addressInfo = {
+										city: result.cityName,
+										district: result.countyName,
+										address: result.detailInfo,
+										province: result.provinceName,
+										mobile: result.telNumber,
+										nickname: result.userName,
+									}
+								},
+							})
 						}
 					}
 				})
